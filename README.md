@@ -29,6 +29,34 @@ https://equipment-qr-management.onrender.com
 
 ---
 
+## Screenshots
+
+### Login
+
+![Login page](screenshots/login.png)
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Home Search Page
+
+![Home Search Page](screenshots/home.png)
+
+### Equipment List
+
+![Equipment List](screenshots/equipment-list.png)
+
+### Machine Detail
+
+![Machine Detail](screenshots/machine-detail.png)
+
+### Public QR Page
+
+![Public QR Page](screenshots/public-qr-page.png)
+
+---
+
 ## Main Features
 
 - Full-stack TypeScript application
