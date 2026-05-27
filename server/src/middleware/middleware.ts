@@ -1,6 +1,16 @@
+import fs from "fs";
 import multer from "multer";
 import path from "path";
 import type { Request } from "express";
+
+// Uploaded images are stored in server/uploads.
+// On Render, this folder may not exist because uploads is ignored by Git.
+// This creates the folder automatically if it does not exist.
+const uploadsFolder = path.join(process.cwd(), "uploads");
+
+if (!fs.existsSync(uploadsFolder)) {
+  fs.mkdirSync(uploadsFolder, { recursive: true });
+}
 
 // Defines where uploaded images will be stored
 const storage = multer.diskStorage({
@@ -9,7 +19,7 @@ const storage = multer.diskStorage({
     _file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void,
   ) {
-    cb(null, "uploads/");
+    cb(null, uploadsFolder);
   },
 
   filename(

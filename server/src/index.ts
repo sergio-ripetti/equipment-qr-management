@@ -26,7 +26,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Test route
 app.get("/", (_req: Request, res: Response) => {
-  res.send("Ripe Deli Equipment API is running");
+  res.send("Equipment API is running");
 });
 
 // API routes
