@@ -17,6 +17,17 @@ Each equipment item has a private detail page for logged-in users and a public Q
 This app was inspired by a real-world need to keep equipment maintenance records organized and easy to access when required.
 
 ---
+## Live Demo
+
+Frontend:
+
+https://equipment-qr-management.vercel.app/
+
+Backend API:
+
+https://equipment-qr-management.onrender.com
+
+---
 
 ## Main Features
 
