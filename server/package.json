@@ -1,0 +1,44 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "seed": "ts-node src/seed.ts",
+    "destroy": "ts-node src/seed.ts -d",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "9.0.3",
+    "mongoose": "^8.18.1",
+    "multer": "2.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/cors": "2.8.19",
+    "@types/express": "5.0.6",
+    "@types/jsonwebtoken": "9.0.10",
+    "@types/multer": "2.1.0",
+    "@types/node": "25.9.1",
+    "eslint": "10.4.0",
+    "globals": "17.6.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "10.9.2",
+    "typescript": "6.0.3"
+  }
+}
