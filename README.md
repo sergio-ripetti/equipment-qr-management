@@ -4,7 +4,7 @@ Full-stack equipment management system built for tracking equipment records, mai
 
 This project was designed as a practical solution for businesses that need quick access to equipment information and maintenance records during inspections, audits, or daily operations. Instead of searching through paper records, spreadsheets, or folders, each equipment item can be accessed through a QR code and managed from a central system.
 
-The application was built as a portfolio-ready full-stack project using React, TypeScript, Node.js, Express, MongoDB, JWT authentication, image uploads, and role-based access control.
+The application was built as a portfolio-ready full-stack project using React, TypeScript, Node.js, Express, MongoDB, JWT authentication, Cloudinary image storage, and role-based access control.
 
 ---
 
@@ -17,6 +17,7 @@ Each equipment item has a private detail page for logged-in users and a public Q
 This app was inspired by a real-world need to keep equipment maintenance records organized and easy to access when required.
 
 ---
+
 ## Live Demo
 
 Frontend:
@@ -64,6 +65,7 @@ https://equipment-qr-management.onrender.com
 - QR code generation for each equipment item
 - Public QR equipment detail page
 - Image upload with preview and validation
+- Cloudinary image storage for persistent uploaded images
 - Maintenance history tracking
 - Add, edit, and delete maintenance records
 - JWT authentication
@@ -177,6 +179,7 @@ Public users can:
 - JWT authentication
 - bcryptjs
 - Multer
+- Cloudinary
 - CORS
 - dotenv
 
@@ -184,12 +187,19 @@ Public users can:
 
 - MongoDB Atlas
 
+### Deployment
+
+- Frontend deployed on Vercel
+- Backend deployed on Render
+- Database hosted on MongoDB Atlas
+- Images hosted on Cloudinary
+
 ---
 
 ## Project Structure
 
 ```txt
-equipment-qr-management-app
+equipment-qr-management
 ├── client
 │   ├── public
 │   ├── src
@@ -219,6 +229,7 @@ equipment-qr-management-app
 │   ├── package.json
 │   └── tsconfig.json
 │
+├── screenshots
 ├── .gitignore
 └── README.md
 ```
@@ -268,7 +279,11 @@ Add:
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=your_secure_secret_key
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
 Example:
@@ -277,6 +292,10 @@ Example:
 PORT=5000
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/equipment-db
 JWT_SECRET=your_secure_secret_key
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
 ---
@@ -286,8 +305,8 @@ JWT_SECRET=your_secure_secret_key
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/equipment-qr-management-app.git
-cd equipment-qr-management-app
+git clone https://github.com/sergio-ripetti/equipment-qr-management.git
+cd equipment-qr-management
 ```
 
 If your repository has a different name, use that folder name instead.
@@ -340,6 +359,10 @@ Add:
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
+
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
 ---
@@ -367,10 +390,8 @@ http://localhost:5000
 Expected response:
 
 ```txt
-Ripe Deli Equipment API is running
+Equipment QR Management API is running
 ```
-
-Note: the response text can be changed to a more generic message if needed.
 
 ---
 
@@ -567,19 +588,32 @@ GET /api/activity-logs
 
 ## Image Uploads
 
-This project currently uses local server storage for uploaded equipment images.
+This project uses Cloudinary to store uploaded equipment images.
 
-Uploaded images are saved in:
+When a user creates or edits an equipment item with an image, the backend uploads the image to Cloudinary and saves the secure Cloudinary URL in MongoDB.
+
+This makes uploaded images persistent and prevents them from being lost when the backend service restarts, redeploys, or runs on a hosting platform with temporary file storage.
+
+The app still supports default demo images from the frontend public folder when no custom image is uploaded.
+
+Image upload flow:
 
 ```txt
-server/uploads
+User selects image
+Frontend sends image as FormData
+Backend receives image with Multer memory storage
+Backend uploads image to Cloudinary
+MongoDB stores the Cloudinary secure URL
+Frontend displays the image directly from Cloudinary
 ```
 
-The app validates images before saving and currently limits image size from the frontend.
+Cloudinary environment variables are required in the backend:
 
-For a portfolio demo, local uploads are enough to demonstrate the feature.
-
-For production, cloud image storage is recommended because many hosting platforms use temporary file systems. A future improvement would be replacing local uploads with Cloudinary, Amazon S3, or another persistent storage provider.
+```env
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
 
 ---
 
@@ -625,6 +659,7 @@ Recommended deployment approach:
 Frontend: Vercel
 Backend: Render
 Database: MongoDB Atlas
+Image storage: Cloudinary
 ```
 
 ---
@@ -657,7 +692,7 @@ Recommended settings:
 
 ```txt
 Root directory: server
-Build command: npm install && npm run build
+Build command: npm install --include=dev && npm run build
 Start command: npm start
 ```
 
@@ -667,27 +702,27 @@ Required environment variables:
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 NODE_ENV=production
+
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
 ---
 
-## Notes About Image Storage in Production
+## Notes About Image Storage
 
-The current version stores uploaded images locally in the backend server.
+The first version of the project used local backend uploads for equipment images. This was later improved by integrating Cloudinary.
 
-This is suitable for development and portfolio demonstration, but not ideal for production because uploaded files may not persist on some hosting platforms.
+Cloudinary is now used as the main image storage provider, making uploaded images persistent and suitable for deployed environments such as Render.
 
-Recommended future production solution:
-
-```txt
-Cloudinary or Amazon S3
-```
+Default demo images are still served from the frontend public folder.
 
 ---
 
 ## Future Improvements
 
-- Move image storage from local server uploads to Cloudinary or another cloud storage provider
+- Add image optimization presets and automatic resizing with Cloudinary transformations
 - Add automated tests
 - Add password reset functionality
 - Add email notifications for maintenance reminders
@@ -711,7 +746,7 @@ Current status:
 - Authentication working
 - Role-based access working
 - Equipment CRUD working
-- Image upload working
+- Cloudinary image upload working
 - Maintenance CRUD working
 - Public QR pages working
 - Activity logs working

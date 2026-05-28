@@ -1,38 +1,13 @@
-import fs from "fs";
 import multer from "multer";
 import path from "path";
 import type { Request } from "express";
 
-// Uploaded images are stored in server/uploads.
-// On Render, this folder may not exist because uploads is ignored by Git.
-// This creates the folder automatically if it does not exist.
-const uploadsFolder = path.join(process.cwd(), "uploads");
+// Stores uploaded files in memory before sending them to Cloudinary.
+// This avoids saving files inside Render's temporary filesystem.
+const storage = multer.memoryStorage();
 
-if (!fs.existsSync(uploadsFolder)) {
-  fs.mkdirSync(uploadsFolder, { recursive: true });
-}
-
-// Defines where uploaded images will be stored
-const storage = multer.diskStorage({
-  destination(
-    _req: Request,
-    _file: Express.Multer.File,
-    cb: (error: Error | null, destination: string) => void,
-  ) {
-    cb(null, uploadsFolder);
-  },
-
-  filename(
-    _req: Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, filename: string) => void,
-  ) {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
-  },
-});
-
-// Validates image file types
+// Validates image file types before allowing the upload.
+// Only jpeg, jpg, png, and webp images are accepted.
 const fileFilter = (
   _req: Request,
   file: Express.Multer.File,

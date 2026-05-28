@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
+import type { UploadApiResponse } from "cloudinary";
 
 import Machine = require("../models/Machine");
+import cloudinary from "../config/cloudinary";
 import { deleteUploadedImage } from "../utils/fileHelpers";
 import { createActivityLog } from "../utils/activityLogger";
 
@@ -40,6 +42,32 @@ type MachineParams = {
 type MaintenanceParams = {
   id: string;
   maintenanceIndex: string;
+};
+
+// Uploads an image file from memory to Cloudinary.
+// Multer stores the file in memory, then this helper sends the buffer to Cloudinary.
+// The returned secure_url is saved in MongoDB as the machine image URL.
+const uploadImageToCloudinary = (
+  file: Express.Multer.File,
+): Promise<UploadApiResponse> => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "equipment-qr-management",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error || !result) {
+          reject(error || new Error("Cloudinary upload failed."));
+          return;
+        }
+
+        resolve(result);
+      },
+    );
+
+    uploadStream.end(file.buffer);
+  });
 };
 
 // @desc    Get all machines
@@ -118,8 +146,15 @@ export const createMachine = async (
       "0",
     )}`;
 
-    // If an image was uploaded, save its filename. Otherwise use default image.
-    const imageUrl = req.file ? req.file.filename : "maquina1.webp";
+    // Default image used when the user does not upload a custom image.
+    let imageUrl = "maquina1.webp";
+
+    // If the user uploads an image, send it to Cloudinary.
+    // The Cloudinary secure URL is saved in MongoDB.
+    if (req.file) {
+      const uploadedImage = await uploadImageToCloudinary(req.file);
+      imageUrl = uploadedImage.secure_url;
+    }
 
     // Creates the machine first
     const machine = await Machine.create({
@@ -142,11 +177,7 @@ export const createMachine = async (
 
     res.status(201).json(machine);
   } catch (error) {
-    // If create fails after multer uploaded a file, remove that uploaded file
-    if (req.file) {
-      deleteUploadedImage(req.file.filename);
-    }
-
+    console.error("create machine error:", error);
     res.status(400).json({
       message: "Error creating machine",
       error: error instanceof Error ? error.message : "Unknown error",
@@ -172,22 +203,19 @@ export const updateMachine = async (
 
     let imageUrl = existingMachine.imageUrl;
 
-    // If the user removed the image, delete the old uploaded image and use default image
+    // If the user removed the image, delete the old Cloudinary image and use default image.
     if (req.body.removeImage === "true") {
-      deleteUploadedImage(existingMachine.imageUrl);
-
-      // If for some reason a new file was also uploaded, remove it too
-      if (req.file) {
-        deleteUploadedImage(req.file.filename);
-      }
+      await deleteUploadedImage(existingMachine.imageUrl);
 
       imageUrl = "maquina1.webp";
     }
 
-    // If a new image was uploaded, delete the old uploaded image and use the new one
+    // If a new image was uploaded, delete the old Cloudinary image and save the new Cloudinary URL.
     if (req.file && req.body.removeImage !== "true") {
-      deleteUploadedImage(existingMachine.imageUrl);
-      imageUrl = req.file.filename;
+      await deleteUploadedImage(existingMachine.imageUrl);
+
+      const uploadedImage = await uploadImageToCloudinary(req.file);
+      imageUrl = uploadedImage.secure_url;
     }
 
     const machine = await Machine.findByIdAndUpdate(
@@ -223,11 +251,7 @@ export const updateMachine = async (
 
     res.status(200).json(machine);
   } catch (error) {
-    // If update fails after multer uploaded a file, remove that uploaded file
-    if (req.file) {
-      deleteUploadedImage(req.file.filename);
-    }
-
+    console.error("Update machine error:", error);
     res.status(400).json({
       message: "Error updating machine",
       error: error instanceof Error ? error.message : "Unknown error",
@@ -251,8 +275,8 @@ export const deleteMachine = async (
       return;
     }
 
-    // Deletes the uploaded image from server/uploads if it is not a demo image
-    deleteUploadedImage(machine.imageUrl);
+    // Deletes the uploaded image from Cloudinary if it is not a demo/default image.
+    await deleteUploadedImage(machine.imageUrl);
 
     await createActivityLog({
       req,
