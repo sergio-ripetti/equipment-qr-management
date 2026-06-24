@@ -38,62 +38,15 @@ export default function Navbar({ sidebarOpen, onMenuToggle }: NavbarProps) {
     <nav className="sticky top-0 z-20 bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-900 text-white shadow-lg">
       <div className="w-full">
         <div className="flex min-h-16 items-center justify-between gap-4 px-4 lg:px-[calc(92%/2-768px)]">
-          {/* Mobile: Hamburger button on LEFT - moves with sidebar */}
-          {user && canAccessPrivateApp(user) && (
+          {/* Mobile: Hamburger button on LEFT (only shows when sidebar is closed) */}
+          {user && canAccessPrivateApp(user) && !sidebarOpen && (
             <button
               type="button"
               onClick={onMenuToggle}
-              className={`lg:hidden p-2 rounded-lg hover:bg-white/10 transition-transform duration-700 ease-in-out relative ${
-                sidebarOpen ? "translate-x-56" : "translate-x-0"
-              }`}
-              aria-label="Toggle sidebar menu"
+              className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition"
+              aria-label="Open sidebar menu"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                viewBox="0 0 24 24"
-              >
-                {/* Top line - rotates to form top of X */}
-                <line
-                  x1="4"
-                  y1="6"
-                  x2="20"
-                  y2="6"
-                  className={`transition-all duration-700 origin-center ${
-                    sidebarOpen ? "rotate-45 translate-y-3 translate-x-0" : "rotate-0"
-                  }`}
-                  style={{
-                    transformOrigin: "center",
-                  }}
-                />
-                {/* Middle line - fades and scales */}
-                <line
-                  x1="4"
-                  y1="12"
-                  x2="20"
-                  y2="12"
-                  className={`transition-all duration-700 ${
-                    sidebarOpen ? "opacity-0 scale-0" : "opacity-100 scale-100"
-                  }`}
-                />
-                {/* Bottom line - rotates to form bottom of X */}
-                <line
-                  x1="4"
-                  y1="18"
-                  x2="20"
-                  y2="18"
-                  className={`transition-all duration-700 origin-center ${
-                    sidebarOpen ? "-rotate-45 -translate-y-3 translate-x-0" : "rotate-0"
-                  }`}
-                  style={{
-                    transformOrigin: "center",
-                  }}
-                />
-              </svg>
+              <Bars3Icon className="w-6 h-6" />
             </button>
           )}
 

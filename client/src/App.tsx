@@ -28,14 +28,13 @@ export default function App() {
   // Hide navbar and sidebar on login page
   const isLoginPage = location.pathname === "/login";
 
-  const closeSidebar = () => setSidebarOpen(false);
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   return (
     <div className="flex h-screen flex-col">
       {/* Sidebar - overlay on mobile only, hidden on desktop */}
       {!isPublicRoute && !isLoginPage && (
-        <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+        <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
       )}
 
       {/* Main content area */}

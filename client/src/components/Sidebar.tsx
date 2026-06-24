@@ -15,10 +15,10 @@ type NavLinkState = {
 
 type SidebarProps = {
   isOpen: boolean;
-  onClose: () => void;
+  onToggle: () => void;
 };
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const user = getSavedUser();
 
   const navLinkClass = ({ isActive }: NavLinkState) =>
@@ -30,7 +30,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const handleLogout = () => {
     removeSavedUser();
-    onClose();
+    onToggle();
     window.location.href = "/login";
   };
 
@@ -40,7 +40,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          onClick={onClose}
+          onClick={onToggle}
           aria-label="Close sidebar"
         />
       )}
@@ -60,11 +60,40 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           />
           <button
             type="button"
-            onClick={onClose}
+            onClick={onToggle}
             className="lg:hidden p-1 rounded-lg hover:bg-white/10 transition"
             aria-label="Close sidebar"
           >
-            <XMarkIcon className="w-5 h-5" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              viewBox="0 0 24 24"
+            >
+              {/* Top line */}
+              <line
+                x1="4"
+                y1="6"
+                x2="20"
+                y2="6"
+                className="rotate-45 translate-y-2 transition-transform duration-700"
+                style={{ transformOrigin: "center" }}
+              />
+              {/* Middle line */}
+              <line x1="4" y1="12" x2="20" y2="12" className="opacity-0 transition-opacity duration-700" />
+              {/* Bottom line */}
+              <line
+                x1="4"
+                y1="18"
+                x2="20"
+                y2="18"
+                className="-rotate-45 -translate-y-2 transition-transform duration-700"
+                style={{ transformOrigin: "center" }}
+              />
+            </svg>
           </button>
         </div>
 
@@ -72,37 +101,37 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <nav className="flex-1 overflow-y-auto p-4 space-y-2">
           {user && canAccessPrivateApp(user) && (
             <>
-              <NavLink to="/" onClick={onClose} className={navLinkClass}>
+              <NavLink to="/" onClick={onToggle} className={navLinkClass}>
                 <span>🏠</span>
                 <span>Home</span>
               </NavLink>
 
-              <NavLink to="/dashboard" onClick={onClose} className={navLinkClass}>
+              <NavLink to="/dashboard" onClick={onToggle} className={navLinkClass}>
                 <span>📊</span>
                 <span>Dashboard</span>
               </NavLink>
 
-              <NavLink to="/machines" onClick={onClose} className={navLinkClass}>
+              <NavLink to="/machines" onClick={onToggle} className={navLinkClass}>
                 <span>📋</span>
                 <span>Equipment List</span>
               </NavLink>
 
               {canCreateEquipment(user) && (
-                <NavLink to="/create" onClick={onClose} className={navLinkClass}>
+                <NavLink to="/create" onClick={onToggle} className={navLinkClass}>
                   <span>➕</span>
                   <span>New Equipment</span>
                 </NavLink>
               )}
 
               {canAccessAdminTools(user) && (
-                <NavLink to="/activity-log" onClick={onClose} className={navLinkClass}>
+                <NavLink to="/activity-log" onClick={onToggle} className={navLinkClass}>
                   <span>📝</span>
                   <span>Activity Log</span>
                 </NavLink>
               )}
 
               {canAccessAdminTools(user) && (
-                <NavLink to="/users" onClick={onClose} className={navLinkClass}>
+                <NavLink to="/users" onClick={onToggle} className={navLinkClass}>
                   <span>👥</span>
                   <span>Users</span>
                 </NavLink>
