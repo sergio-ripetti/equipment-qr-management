@@ -43,56 +43,55 @@ export default function Navbar({ sidebarOpen, onMenuToggle }: NavbarProps) {
             <button
               type="button"
               onClick={onMenuToggle}
-              className={`lg:hidden p-2 rounded-lg hover:bg-white/10 transition-all duration-700 ease-in-out relative ${
+              className={`lg:hidden p-2 rounded-lg hover:bg-white/10 transition-transform duration-700 ease-in-out relative ${
                 sidebarOpen ? "translate-x-56" : "translate-x-0"
               }`}
               aria-label="Toggle sidebar menu"
             >
               <svg
-                className="w-6 h-6 relative"
+                className="w-6 h-6"
                 fill="none"
-                stroke="currentColor"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 viewBox="0 0 24 24"
               >
-                {/* Top line */}
+                {/* Top line - rotates to form top of X */}
                 <line
-                  x1="3"
+                  x1="4"
                   y1="6"
-                  x2="21"
+                  x2="20"
                   y2="6"
-                  strokeWidth="2"
-                  strokeLinecap="round"
                   className={`transition-all duration-700 origin-center ${
-                    sidebarOpen
-                      ? "stroke-white/0 rotate-45 translate-y-2"
-                      : "stroke-white rotate-0 translate-y-0"
+                    sidebarOpen ? "rotate-45 translate-y-3 translate-x-0" : "rotate-0"
                   }`}
+                  style={{
+                    transformOrigin: "center",
+                  }}
                 />
-                {/* Middle line */}
+                {/* Middle line - fades and scales */}
                 <line
-                  x1="3"
+                  x1="4"
                   y1="12"
-                  x2="21"
+                  x2="20"
                   y2="12"
-                  strokeWidth="2"
-                  strokeLinecap="round"
                   className={`transition-all duration-700 ${
-                    sidebarOpen ? "opacity-0" : "opacity-100"
+                    sidebarOpen ? "opacity-0 scale-0" : "opacity-100 scale-100"
                   }`}
                 />
-                {/* Bottom line */}
+                {/* Bottom line - rotates to form bottom of X */}
                 <line
-                  x1="3"
+                  x1="4"
                   y1="18"
-                  x2="21"
+                  x2="20"
                   y2="18"
-                  strokeWidth="2"
-                  strokeLinecap="round"
                   className={`transition-all duration-700 origin-center ${
-                    sidebarOpen
-                      ? "stroke-white/0 -rotate-45 -translate-y-2"
-                      : "stroke-white rotate-0 translate-y-0"
+                    sidebarOpen ? "-rotate-45 -translate-y-3 translate-x-0" : "rotate-0"
                   }`}
+                  style={{
+                    transformOrigin: "center",
+                  }}
                 />
               </svg>
             </button>
