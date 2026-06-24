@@ -36,21 +36,65 @@ export default function Navbar({ sidebarOpen, onMenuToggle }: NavbarProps) {
 
   return (
     <nav className="sticky top-0 z-20 bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-900 text-white shadow-lg">
-      <div className="w-[92%] max-w-6xl mx-auto">
-        <div className="flex min-h-16 items-center justify-between gap-4">
-          {/* Mobile: Hamburger button on LEFT */}
+      <div className="w-full">
+        <div className="flex min-h-16 items-center justify-between gap-4 px-4 lg:px-[calc(92%/2-768px)]">
+          {/* Mobile: Hamburger button on LEFT - moves with sidebar */}
           {user && canAccessPrivateApp(user) && (
             <button
               type="button"
               onClick={onMenuToggle}
-              className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition"
+              className={`lg:hidden p-2 rounded-lg hover:bg-white/10 transition-all duration-700 ease-in-out relative ${
+                sidebarOpen ? "translate-x-56" : "translate-x-0"
+              }`}
               aria-label="Toggle sidebar menu"
             >
-              {sidebarOpen ? (
-                <XMarkIcon className="w-6 h-6" />
-              ) : (
-                <Bars3Icon className="w-6 h-6" />
-              )}
+              <svg
+                className="w-6 h-6 relative"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {/* Top line */}
+                <line
+                  x1="3"
+                  y1="6"
+                  x2="21"
+                  y2="6"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className={`transition-all duration-700 origin-center ${
+                    sidebarOpen
+                      ? "stroke-white/0 rotate-45 translate-y-2"
+                      : "stroke-white rotate-0 translate-y-0"
+                  }`}
+                />
+                {/* Middle line */}
+                <line
+                  x1="3"
+                  y1="12"
+                  x2="21"
+                  y2="12"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className={`transition-all duration-700 ${
+                    sidebarOpen ? "opacity-0" : "opacity-100"
+                  }`}
+                />
+                {/* Bottom line */}
+                <line
+                  x1="3"
+                  y1="18"
+                  x2="21"
+                  y2="18"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className={`transition-all duration-700 origin-center ${
+                    sidebarOpen
+                      ? "stroke-white/0 -rotate-45 -translate-y-2"
+                      : "stroke-white rotate-0 translate-y-0"
+                  }`}
+                />
+              </svg>
             </button>
           )}
 
