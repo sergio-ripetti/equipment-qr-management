@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
+import { Bars3Icon } from "@heroicons/react/24/solid";
 
 import { getSavedUser, removeSavedUser } from "../utils/authStorage";
 import {
@@ -35,25 +34,27 @@ export default function Navbar({ sidebarOpen, onMenuToggle }: NavbarProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-20 bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-900 text-white shadow-lg">
-      <div className="w-full">
-        <div className="flex min-h-16 items-center justify-between gap-4 px-4 lg:px-[calc(92%/2-768px)]">
-          {/* Mobile: Hamburger button on LEFT (only shows when sidebar is closed) */}
-          {user && canAccessPrivateApp(user) && !sidebarOpen && (
+    <nav className="sticky top-0 z-50 bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-900 text-white shadow-lg">
+      <div className="w-[92%] max-w-6xl mx-auto">
+        <div className="flex min-h-16 items-center justify-between gap-4">
+          {/* Mobile: Hamburger button on LEFT - fades out when sidebar opens */}
+          {user && canAccessPrivateApp(user) && (
             <button
               type="button"
               onClick={onMenuToggle}
-              className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition"
+              className={`lg:hidden p-2 rounded-lg hover:bg-white/10 transition-opacity duration-300 ${
+                sidebarOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+              }`}
               aria-label="Open sidebar menu"
             >
               <Bars3Icon className="w-6 h-6" />
             </button>
           )}
 
-          {/* Logo: on RIGHT in mobile, LEFT in desktop */}
+          {/* Logo - flex-1 on mobile to center it, normal on desktop */}
           <Link
             to={user ? "/" : "/login"}
-            className="flex items-center gap-3 hover:opacity-90 transition lg:order-none"
+            className="flex items-center gap-3 hover:opacity-90 transition flex-1 lg:flex-none justify-center lg:justify-start"
           >
             <img
               src="/logo-ripe.png"
@@ -62,7 +63,7 @@ export default function Navbar({ sidebarOpen, onMenuToggle }: NavbarProps) {
             />
           </Link>
 
-          {/* Desktop navigation (hidden on mobile) */}
+          {/* Desktop navigation */}
           {user && canAccessPrivateApp(user) && (
             <div className="hidden lg:flex items-center gap-1">
               <NavLink to="/" className={navLinkClass}>

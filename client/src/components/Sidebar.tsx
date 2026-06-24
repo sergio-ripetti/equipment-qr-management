@@ -1,7 +1,4 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
-
 import { getSavedUser, removeSavedUser } from "../utils/authStorage";
 import {
   canAccessPrivateApp,
@@ -51,21 +48,22 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         lg:relative lg:translate-x-0 lg:h-screen lg:w-56 lg:transform-none lg:transition-none`}
       >
-        {/* Header with logo and close button */}
+        {/* Header with logo and animated close button */}
         <div className="flex items-center justify-between gap-3 p-4 border-b border-white/10">
           <img
             src="/logo-ripe.png"
             alt="Ripe Deli Equipment logo"
             className="h-8 w-auto object-contain"
           />
+          {/* Animated hamburger→X button */}
           <button
             type="button"
             onClick={onToggle}
-            className="lg:hidden p-1 rounded-lg hover:bg-white/10 transition"
+            className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
             aria-label="Close sidebar"
           >
             <svg
-              className="w-5 h-5"
+              className="w-6 h-6"
               fill="none"
               stroke="white"
               strokeWidth="2"
@@ -73,25 +71,35 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               strokeLinejoin="round"
               viewBox="0 0 24 24"
             >
-              {/* Top line */}
+              {/* Top line - rotates 45° to form top of X */}
               <line
-                x1="4"
+                x1="3"
                 y1="6"
-                x2="20"
+                x2="21"
                 y2="6"
-                className="rotate-45 translate-y-2 transition-transform duration-700"
-                style={{ transformOrigin: "center" }}
+                className={`transition-all duration-700 origin-center ${
+                  isOpen ? "rotate-45 translate-y-3" : "rotate-0"
+                }`}
               />
-              {/* Middle line */}
-              <line x1="4" y1="12" x2="20" y2="12" className="opacity-0 transition-opacity duration-700" />
-              {/* Bottom line */}
+              {/* Middle line - fades out */}
               <line
-                x1="4"
+                x1="3"
+                y1="12"
+                x2="21"
+                y2="12"
+                className={`transition-opacity duration-700 ${
+                  isOpen ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              {/* Bottom line - rotates -45° to form bottom of X */}
+              <line
+                x1="3"
                 y1="18"
-                x2="20"
+                x2="21"
                 y2="18"
-                className="-rotate-45 -translate-y-2 transition-transform duration-700"
-                style={{ transformOrigin: "center" }}
+                className={`transition-all duration-700 origin-center ${
+                  isOpen ? "-rotate-45 -translate-y-3" : "rotate-0"
+                }`}
               />
             </svg>
           </button>
