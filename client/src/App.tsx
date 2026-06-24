@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
 import RoleRoute from "./components/RoleRoute";
 
 import Home from "./pages/Home";
@@ -19,117 +21,135 @@ import { USER_ROLES } from "./constants/userRoles";
 
 export default function App() {
   const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Hides the main private navbar on public QR pages
   const isPublicRoute = location.pathname.startsWith("/public");
+  // Hide navbar and sidebar on login page
+  const isLoginPage = location.pathname === "/login";
+
+  const closeSidebar = () => setSidebarOpen(false);
+  const openSidebar = () => setSidebarOpen(true);
 
   return (
-    <>
-      {!isPublicRoute && <Navbar />}
+    <div className="flex h-screen flex-col lg:flex-row">
+      {/* Sidebar - visible on desktop, overlay on mobile */}
+      {!isPublicRoute && !isLoginPage && (
+        <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+      )}
 
-      <main>
-        <Routes>
-          <Route path="/login" element={<Login />} />
+      {/* Main content area */}
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Navbar */}
+        {!isPublicRoute && !isLoginPage && (
+          <Navbar onMenuOpen={openSidebar} />
+        )}
 
-          {/* Public QR route */}
-          <Route path="/public/machine/:id" element={<PublicMachineDetail />} />
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto bg-slate-50">
+          <Routes>
+            <Route path="/login" element={<Login />} />
 
-          {/* Private routes */}
-          <Route
-            path="/"
-            element={
-              <RoleRoute
-                allowedRoles={[
-                  USER_ROLES.ADMIN,
-                  USER_ROLES.TECHNICIAN,
-                  USER_ROLES.VIEWER,
-                ]}>
-                <Home />
-              </RoleRoute>
-            }
-          />
+            {/* Public QR route */}
+            <Route path="/public/machine/:id" element={<PublicMachineDetail />} />
 
-          <Route
-            path="/dashboard"
-            element={
-              <RoleRoute
-                allowedRoles={[
-                  USER_ROLES.ADMIN,
-                  USER_ROLES.TECHNICIAN,
-                  USER_ROLES.VIEWER,
-                ]}>
-                <Dashboard />
-              </RoleRoute>
-            }
-          />
+            {/* Private routes */}
+            <Route
+              path="/"
+              element={
+                <RoleRoute
+                  allowedRoles={[
+                    USER_ROLES.ADMIN,
+                    USER_ROLES.TECHNICIAN,
+                    USER_ROLES.VIEWER,
+                  ]}>
+                  <Home />
+                </RoleRoute>
+              }
+            />
 
-          <Route
-            path="/machines"
-            element={
-              <RoleRoute
-                allowedRoles={[
-                  USER_ROLES.ADMIN,
-                  USER_ROLES.TECHNICIAN,
-                  USER_ROLES.VIEWER,
-                ]}>
-                <MachineList />
-              </RoleRoute>
-            }
-          />
+            <Route
+              path="/dashboard"
+              element={
+                <RoleRoute
+                  allowedRoles={[
+                    USER_ROLES.ADMIN,
+                    USER_ROLES.TECHNICIAN,
+                    USER_ROLES.VIEWER,
+                  ]}>
+                  <Dashboard />
+                </RoleRoute>
+              }
+            />
 
-          <Route
-            path="/machine/:id"
-            element={
-              <RoleRoute
-                allowedRoles={[
-                  USER_ROLES.ADMIN,
-                  USER_ROLES.TECHNICIAN,
-                  USER_ROLES.VIEWER,
-                ]}>
-                <MachineDetail />
-              </RoleRoute>
-            }
-          />
+            <Route
+              path="/machines"
+              element={
+                <RoleRoute
+                  allowedRoles={[
+                    USER_ROLES.ADMIN,
+                    USER_ROLES.TECHNICIAN,
+                    USER_ROLES.VIEWER,
+                  ]}>
+                  <MachineList />
+                </RoleRoute>
+              }
+            />
 
-          <Route
-            path="/machine/:id/edit"
-            element={
-              <RoleRoute allowedRoles={[USER_ROLES.ADMIN]}>
-                <EditMachine />
-              </RoleRoute>
-            }
-          />
+            <Route
+              path="/machine/:id"
+              element={
+                <RoleRoute
+                  allowedRoles={[
+                    USER_ROLES.ADMIN,
+                    USER_ROLES.TECHNICIAN,
+                    USER_ROLES.VIEWER,
+                  ]}>
+                  <MachineDetail />
+                </RoleRoute>
+              }
+            />
 
-          <Route
-            path="/create"
-            element={
-              <RoleRoute allowedRoles={[USER_ROLES.ADMIN]}>
-                <CreateMachine />
-              </RoleRoute>
-            }
-          />
+            <Route
+              path="/machine/:id/edit"
+              element={
+                <RoleRoute allowedRoles={[USER_ROLES.ADMIN]}>
+                  <EditMachine />
+                </RoleRoute>
+              }
+            />
 
-          <Route
-            path="/users"
-            element={
-              <RoleRoute allowedRoles={[USER_ROLES.ADMIN]}>
-                <UserManagement />
-              </RoleRoute>
-            }
-          />
+            <Route
+              path="/create"
+              element={
+                <RoleRoute allowedRoles={[USER_ROLES.ADMIN]}>
+                  <CreateMachine />
+                </RoleRoute>
+              }
+            />
 
-          <Route
-            path="/activity-log"
-            element={
-              <RoleRoute allowedRoles={[USER_ROLES.ADMIN]}>
-                <ActivityLog />
-              </RoleRoute>
-            }
-          />
+            <Route
+              path="/users"
+              element={
+                <RoleRoute allowedRoles={[USER_ROLES.ADMIN]}>
+                  <UserManagement />
+                </RoleRoute>
+              }
+            />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-    </>
+            <Route
+              path="/activity-log"
+              element={
+                <RoleRoute allowedRoles={[USER_ROLES.ADMIN]}>
+                  <ActivityLog />
+                </RoleRoute>
+              }
+            />
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
   );
 }
