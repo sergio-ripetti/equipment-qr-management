@@ -29,11 +29,11 @@ export default function App() {
   const isLoginPage = location.pathname === "/login";
 
   const closeSidebar = () => setSidebarOpen(false);
-  const openSidebar = () => setSidebarOpen(true);
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   return (
-    <div className="flex h-screen flex-col lg:flex-row">
-      {/* Sidebar - visible on desktop, overlay on mobile */}
+    <div className="flex h-screen flex-col">
+      {/* Sidebar - overlay on mobile only, hidden on desktop */}
       {!isPublicRoute && !isLoginPage && (
         <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
       )}
@@ -42,7 +42,7 @@ export default function App() {
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Navbar */}
         {!isPublicRoute && !isLoginPage && (
-          <Navbar onMenuOpen={openSidebar} />
+          <Navbar sidebarOpen={sidebarOpen} onMenuToggle={toggleSidebar} />
         )}
 
         {/* Main content */}
