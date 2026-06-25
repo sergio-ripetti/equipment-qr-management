@@ -34,7 +34,7 @@ export default function Navbar({ sidebarOpen, onMenuToggle }: NavbarProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-900 text-white shadow-lg">
+    <nav className="sticky top-0 z-40 lg:z-50 bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-900 text-white shadow-lg">
       <div className="w-[92%] max-w-6xl mx-auto">
         <div className="flex min-h-16 items-center justify-between gap-4">
           {/* Mobile: Hamburger button on LEFT - fades out when sidebar opens */}
