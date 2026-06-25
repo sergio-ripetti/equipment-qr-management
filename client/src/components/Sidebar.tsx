@@ -49,7 +49,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         lg:hidden`}
       >
         {/* Header with logo and animated close button */}
-        <div className="flex items-center justify-between gap-3 p-4 border-b border-white/10">
+        <div className="flex items-center justify-between gap-3 p-4 border-b border-white/10 min-h-16">
           <img
             src="/logo-ripe.png"
             alt="Ripe Deli Equipment logo"
