@@ -43,10 +43,12 @@ export async function createActivityLog({
       description,
     });
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Activity log error:", error.message);
-    } else {
-      console.error("Activity log error:", error);
+    if (process.env.NODE_ENV === 'development') {
+      if (error instanceof Error) {
+        console.error("Activity log error:", error.message);
+      } else {
+        console.error("Activity log error:", error);
+      }
     }
   }
 }

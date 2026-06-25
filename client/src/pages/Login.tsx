@@ -60,7 +60,9 @@ export default function Login() {
 
       navigate(redirectPath);
     } catch (error) {
-      console.error(error);
+      if (import.meta.env.DEV) {
+        console.error(error);
+      }
 
       if (error instanceof Error) {
         setError(error.message || "Could not login. Please try again.");

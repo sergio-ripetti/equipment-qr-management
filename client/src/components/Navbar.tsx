@@ -1,6 +1,5 @@
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { Bars3Icon } from "@heroicons/react/24/solid";
-
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { getSavedUser, removeSavedUser } from "../utils/authStorage";
 import {
   canAccessPrivateApp,
@@ -42,20 +41,28 @@ export default function Navbar({ sidebarOpen, onMenuToggle }: NavbarProps) {
             <button
               type="button"
               onClick={onMenuToggle}
-              className={`lg:hidden p-2 rounded-lg hover:bg-white/10 transition-opacity duration-300 ${
-                sidebarOpen ? "opacity-0 pointer-events-none" : "opacity-100"
-              }`}
-              aria-label="Open sidebar menu"
-            >
-              <Bars3Icon className="w-6 h-6" />
+              className="relative lg:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-white/10 transition-colors">
+              <Bars3Icon
+                className={`absolute h-6 w-6 transition-all duration-300 ${
+                  sidebarOpen
+                    ? "opacity-0 rotate-90 scale-75"
+                    : "opacity-100 rotate-0 scale-100"
+                }`}
+              />
+
+              <XMarkIcon
+                className={`absolute h-6 w-6 transition-all duration-300 ${
+                  sidebarOpen
+                    ? "opacity-100 rotate-0 scale-100"
+                    : "opacity-0 -rotate-90 scale-75"
+                }`}
+              />
             </button>
           )}
-
           {/* Logo - flex-1 on mobile to center it, normal on desktop */}
           <Link
             to={user ? "/" : "/login"}
-            className="flex items-center gap-3 hover:opacity-90 transition flex-1 lg:flex-none justify-center lg:justify-start"
-          >
+            className="flex items-center gap-3 hover:opacity-90 transition flex-1 lg:flex-none justify-center lg:justify-start">
             <img
               src="/logo-ripe.png"
               alt="Ripe Deli Equipment logo"
@@ -114,16 +121,14 @@ export default function Navbar({ sidebarOpen, onMenuToggle }: NavbarProps) {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium hover:bg-white/20 transition"
-              >
+                className="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium hover:bg-white/20 transition">
                 Logout
               </button>
             </div>
           ) : (
             <Link
               to="/login"
-              className="hidden lg:inline-flex rounded-lg bg-white/10 px-4 py-2 text-sm font-medium hover:bg-white/20 transition"
-            >
+              className="hidden lg:inline-flex rounded-lg bg-white/10 px-4 py-2 text-sm font-medium hover:bg-white/20 transition">
               Login
             </Link>
           )}

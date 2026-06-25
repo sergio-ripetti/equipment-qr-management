@@ -177,10 +177,11 @@ export const createMachine = async (
 
     res.status(201).json(machine);
   } catch (error) {
-    console.error("create machine error:", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error("create machine error:", error);
+    }
     res.status(400).json({
-      message: "Error creating machine",
-      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Error creating machine"
     });
   }
 };
@@ -251,10 +252,11 @@ export const updateMachine = async (
 
     res.status(200).json(machine);
   } catch (error) {
-    console.error("Update machine error:", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Update machine error:", error);
+    }
     res.status(400).json({
-      message: "Error updating machine",
-      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Error updating machine"
     });
   }
 };

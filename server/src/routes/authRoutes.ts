@@ -7,11 +7,12 @@ import {
 } from "../controllers/authController";
 
 import { protect } from "../middleware/authMiddleware";
+import { authLimiter } from "../middleware/rateLimiter";
 
 const router = express.Router();
 
-router.post("/login", loginUser);
-router.post("/register", registerUser);
+router.post("/login", authLimiter, loginUser);
+router.post("/register", authLimiter, registerUser);
 router.get("/profile", protect, getUserProfile);
 
 export default router;

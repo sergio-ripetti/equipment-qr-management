@@ -1,4 +1,6 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { getSavedUser, removeSavedUser } from "../utils/authStorage";
 import {
   canAccessPrivateApp,
@@ -16,7 +18,9 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
+  const navigate = useNavigate();
   const user = getSavedUser();
+  const [isCollapsed, setIsCollapsed] = useState(false); // Desktop collapse state
 
   const navLinkClass = ({ isActive }: NavLinkState) =>
     `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
@@ -27,147 +31,112 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   const handleLogout = () => {
     removeSavedUser();
-    onToggle();
+    if (window.innerWidth < 1024) {
+      onToggle(); // Close mobile menu
+    }
     window.location.href = "/login";
   };
 
+  const handleNavClick = () => {
+    if (window.innerWidth < 1024) {
+      onToggle(); // Close menu on mobile after clicking a link
+    }
+  };
+
+  const menuItems = [
+    { to: "/", label: "Home", icon: "🏠" },
+    { to: "/dashboard", label: "Dashboard", icon: "📊" },
+    { to: "/machines", label: "Equipment List", icon: "📋" },
+    ...(canCreateEquipment(user)
+      ? [{ to: "/create", label: "New Equipment", icon: "➕" }]
+      : []),
+    ...(canAccessAdminTools(user)
+      ? [{ to: "/activity-log", label: "Activity Log", icon: "📝" }]
+      : []),
+    ...(canAccessAdminTools(user)
+      ? [{ to: "/users", label: "Users", icon: "👥" }]
+      : []),
+  ];
+
   return (
     <>
-      {/* Backdrop/Overlay - mobile only */}
+      {/* Mobile Backdrop */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={onToggle}
-          aria-label="Close sidebar"
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-950 via-blue-950 to-indigo-900 text-white shadow-lg transform transition-transform duration-700 ease-in-out z-50 lg:z-40 flex flex-col
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:hidden`}
-      >
-        {/* Header with logo and animated close button */}
-        <div className="flex items-center justify-between gap-3 p-4 border-b border-white/10 min-h-16">
+        className={`
+    fixed
+    left-0
+    top-16
+    h-[calc(100vh-4rem)]
+    w-64
+    bg-gradient-to-b from-slate-950 via-blue-950 to-indigo-900
+    text-white
+    shadow-lg
+    transform transition-transform duration-300 ease-in-out
+    z-40
+    flex flex-col
+    lg:hidden
+    ${isOpen ? "translate-x-0" : "-translate-x-full"}
+  `}>
+        {/* Header */}
+        <div className="flex items-center justify-center p-4 border-b border-white/10 h-20">
           <img
             src="/logo-ripe.png"
             alt="Ripe Deli Equipment logo"
             className="h-8 w-auto object-contain"
           />
-          {/* Animated hamburger→X button */}
-          <button
-            type="button"
-            onClick={onToggle}
-            className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
-            aria-label="Close sidebar"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              viewBox="0 0 24 24"
-            >
-              {/* Top line - rotates 45° to form top of X */}
-              <line
-                x1="3"
-                y1="6"
-                x2="21"
-                y2="6"
-                className={`transition-all duration-700 origin-center ${
-                  isOpen ? "rotate-45 translate-y-3" : "rotate-0"
-                }`}
-              />
-              {/* Middle line - fades out */}
-              <line
-                x1="3"
-                y1="12"
-                x2="21"
-                y2="12"
-                className={`transition-opacity duration-700 ${
-                  isOpen ? "opacity-0" : "opacity-100"
-                }`}
-              />
-              {/* Bottom line - rotates -45° to form bottom of X */}
-              <line
-                x1="3"
-                y1="18"
-                x2="21"
-                y2="18"
-                className={`transition-all duration-700 origin-center ${
-                  isOpen ? "-rotate-45 -translate-y-3" : "rotate-0"
-                }`}
-              />
-            </svg>
-          </button>
         </div>
 
-        {/* Navigation links */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto p-3 space-y-2">
           {user && canAccessPrivateApp(user) && (
             <>
-              <NavLink to="/" onClick={onToggle} className={navLinkClass}>
-                <span>🏠</span>
-                <span>Home</span>
-              </NavLink>
+              {menuItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={handleNavClick}
+                  className={navLinkClass}>
+                  <span className="text-lg flex-shrink-0">{item.icon}</span>
 
-              <NavLink to="/dashboard" onClick={onToggle} className={navLinkClass}>
-                <span>📊</span>
-                <span>Dashboard</span>
-              </NavLink>
-
-              <NavLink to="/machines" onClick={onToggle} className={navLinkClass}>
-                <span>📋</span>
-                <span>Equipment List</span>
-              </NavLink>
-
-              {canCreateEquipment(user) && (
-                <NavLink to="/create" onClick={onToggle} className={navLinkClass}>
-                  <span>➕</span>
-                  <span>New Equipment</span>
+                  <span>{item.label}</span>
                 </NavLink>
-              )}
-
-              {canAccessAdminTools(user) && (
-                <NavLink to="/activity-log" onClick={onToggle} className={navLinkClass}>
-                  <span>📝</span>
-                  <span>Activity Log</span>
-                </NavLink>
-              )}
-
-              {canAccessAdminTools(user) && (
-                <NavLink to="/users" onClick={onToggle} className={navLinkClass}>
-                  <span>👥</span>
-                  <span>Users</span>
-                </NavLink>
-              )}
+              ))}
             </>
           )}
         </nav>
 
-        {/* User card - sticky to bottom */}
+        {/* User Card */}
         {user && canAccessPrivateApp(user) && (
-          <div className="border-t border-white/10 p-4">
+          <div className="border-t border-white/10 p-3">
             <div className="rounded-lg bg-white/10 px-3 py-3 space-y-2">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                   <span className="text-xs font-bold text-white">
                     {user.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <div className="min-w-0">
+
+                <div>
                   <p className="text-sm font-semibold truncate">{user.name}</p>
-                  <p className="text-xs text-blue-200 capitalize">{user.role}</p>
+
+                  <p className="text-xs text-blue-200 capitalize">
+                    {user.role}
+                  </p>
                 </div>
               </div>
+
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-xs font-medium hover:bg-white/20 transition"
-              >
+                className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-xs font-medium hover:bg-white/20 transition">
                 Logout
               </button>
             </div>

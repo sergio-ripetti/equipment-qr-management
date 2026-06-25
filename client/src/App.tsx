@@ -31,7 +31,7 @@ export default function App() {
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen">
       {/* Sidebar - overlay on mobile only, hidden on desktop */}
       {!isPublicRoute && !isLoginPage && (
         <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
@@ -50,7 +50,10 @@ export default function App() {
             <Route path="/login" element={<Login />} />
 
             {/* Public QR route */}
-            <Route path="/public/machine/:id" element={<PublicMachineDetail />} />
+            <Route
+              path="/public/machine/:id"
+              element={<PublicMachineDetail />}
+            />
 
             {/* Private routes */}
             <Route

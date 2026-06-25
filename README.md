@@ -236,11 +236,39 @@ equipment-qr-management
 
 ---
 
+## Security Best Practices
+
+This project follows security best practices for production:
+
+- ✅ **Environment variables**: All sensitive data (.env files) are excluded from git
+- ✅ **CORS**: Restricted to specific origins in production
+- ✅ **Authentication**: JWT tokens expire after 24 hours
+- ✅ **Password encryption**: All passwords are hashed with bcryptjs
+- ✅ **Error handling**: Production errors don't expose sensitive details
+- ✅ **Rate limiting**: Authentication endpoints are rate-limited to prevent brute force
+- ✅ **TypeScript strict mode**: Enabled for type safety
+- ✅ **Input validation**: All inputs are validated with Zod schemas
+- ✅ **Secure storage**: Authentication tokens stored in sessionStorage (not localStorage)
+
+---
+
 ## Environment Variables
 
 Environment variables are not included in the repository for security reasons.
 
 You need to create environment files manually before running the project locally.
+
+A `.env.example` template is provided for reference (without actual values).
+
+To set up safely:
+
+```bash
+# Copy the example files
+cp server/.env.example server/.env
+cp client/.env.example client/.env
+
+# Edit the .env files with your actual values (NEVER commit these files)
+```
 
 ---
 

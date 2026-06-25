@@ -23,7 +23,7 @@ const generateToken = (userId: string): string => {
   }
 
   return jwt.sign({ id: userId }, jwtSecret, {
-    expiresIn: "7d",
+    expiresIn: "24h",
   });
 };
 
@@ -53,9 +53,11 @@ export const loginUser = async (
       token: generateToken(String(user._id)),
     });
   } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Login error:", error);
+    }
     res.status(500).json({
-      message: "Error logging in",
-      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Error logging in"
     });
   }
 };
@@ -93,9 +95,11 @@ export const registerUser = async (
       token: generateToken(String(user._id)),
     });
   } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Register error:", error);
+    }
     res.status(400).json({
-      message: "Error registering user",
-      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Error registering user"
     });
   }
 };
