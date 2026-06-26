@@ -11,7 +11,6 @@ type AuthBody = {
   name?: string;
   email?: string;
   password?: string;
-  role?: "admin" | "technician" | "viewer";
 };
 
 // Generates JWT token
@@ -69,7 +68,7 @@ export const registerUser = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     const userExists = await User.findOne({ email });
 
@@ -84,7 +83,7 @@ export const registerUser = async (
       name,
       email,
       password,
-      role,
+      role: "viewer",
     });
 
     res.status(201).json({

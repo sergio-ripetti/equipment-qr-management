@@ -21,8 +21,9 @@ export function isViewer(user: OptionalUser): boolean {
 // Admin, technician, and viewer can access the internal app.
 // Viewer has read-only access.
 export function canAccessPrivateApp(user: OptionalUser): boolean {
+  if (!user?.role) return false;
   return [USER_ROLES.ADMIN, USER_ROLES.TECHNICIAN, USER_ROLES.VIEWER].includes(
-    user?.role,
+    user.role,
   );
 }
 

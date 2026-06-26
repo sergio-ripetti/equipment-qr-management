@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import helmet from "helmet";
 import dotenv from "dotenv";
 import path from "path";
 
@@ -8,6 +9,7 @@ import machineRoutes from "./routes/machineRoutes";
 import authRoutes from "./routes/authRoutes";
 import activityLogRoutes from "./routes/activityLogRoutes";
 import userRoutes from "./routes/userRoutes";
+import { apiLimiter } from "./middleware/rateLimiter";
 
 // Loads environment variables from .env
 dotenv.config();
@@ -18,8 +20,20 @@ connectDB();
 const app = express();
 
 // Middlewares
+app.use(helmet());
+app.use(apiLimiter);
+const allowedOrigins = process.env.CLIENT_URL
+  ? [process.env.CLIENT_URL]
+  : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:58233'];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']

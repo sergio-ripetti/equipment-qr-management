@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!--
+    Static sitemap for Ripe Deli Equipment.
+    Public QR equipment pages are dynamically generated — their full URLs
+    follow the pattern: /public/machine/:id
+    Add individual equipment URLs below as they are created.
+  -->
+  <url>
+    <loc>https://equipment-qr-management.vercel.app/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>

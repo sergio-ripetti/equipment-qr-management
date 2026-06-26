@@ -56,7 +56,7 @@ export const updateMachineSchema = createMachineSchema.partial();
 // User validation schemas
 export const updateUserRoleSchema = z.object({
   role: z.enum(['admin', 'technician', 'viewer'], {
-    errorMap: () => ({ message: 'Invalid role' })
+    error: () => ({ message: 'Invalid role' })
   })
 });
 

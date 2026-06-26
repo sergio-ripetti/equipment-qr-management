@@ -1,0 +1,14 @@
+User-agent: *
+# Private app routes — do not index
+Disallow: /login
+Disallow: /dashboard
+Disallow: /machines
+Disallow: /machine/
+Disallow: /create
+Disallow: /users
+Disallow: /activity-log
+
+# Public QR equipment pages — allow indexing
+Allow: /public/
+
+Sitemap: https://equipment-qr-management.vercel.app/sitemap.xml

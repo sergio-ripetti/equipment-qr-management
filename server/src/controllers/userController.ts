@@ -32,7 +32,7 @@ export const getUsers = async (_req: Request, res: Response): Promise<void> => {
   } catch (error) {
     res.status(500).json({
       message: "Error getting users",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };
@@ -81,7 +81,7 @@ export const createUser = async (
   } catch (error) {
     res.status(400).json({
       message: "Error creating user",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };
@@ -136,7 +136,7 @@ export const updateUserRole = async (
   } catch (error) {
     res.status(400).json({
       message: "Error updating user role",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };
@@ -185,7 +185,7 @@ export const deleteUser = async (
   } catch (error) {
     res.status(500).json({
       message: "Error deleting user",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };

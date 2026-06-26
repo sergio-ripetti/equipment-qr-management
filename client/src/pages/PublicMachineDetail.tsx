@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import PublicNavbar from "../components/PublicNavbar";
@@ -8,6 +8,7 @@ import StatusBadge from "../components/StatusBadge";
 import { getMachineById } from "../services/machineApi";
 import { getMachineImageUrl } from "../utils/imageHelpers";
 import { formatDate } from "../utils/formatDate";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 import type { Machine } from "../types";
 
@@ -19,6 +20,35 @@ export default function PublicMachineDetail() {
   const [error, setError] = useState("");
 
   const privateMachinePath = id ? `/machine/${id}` : "/dashboard";
+
+  const schemaJson = useMemo(() => {
+    if (!machine) return undefined;
+    return {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: machine.name,
+      description: machine.description || `${machine.name} — equipment details and maintenance history.`,
+      image: getMachineImageUrl(machine.imageUrl),
+      brand: machine.brand ? { "@type": "Brand", name: machine.brand } : undefined,
+      identifier: machine.machineCode,
+      additionalProperty: [
+        machine.serialNumber && { "@type": "PropertyValue", name: "Serial Number", value: machine.serialNumber },
+        machine.location && { "@type": "PropertyValue", name: "Location", value: machine.location },
+        { "@type": "PropertyValue", name: "Status", value: machine.status },
+      ].filter(Boolean),
+    };
+  }, [machine]);
+
+  usePageMeta({
+    title: machine ? `${machine.name} — Ripe Deli Equipment` : "Equipment — Ripe Deli",
+    description: machine
+      ? `${machine.name} (${machine.machineCode}) — ${machine.status}. View details and maintenance history.`
+      : "Equipment details and maintenance history.",
+    imageUrl: machine ? getMachineImageUrl(machine.imageUrl) : undefined,
+    canonicalUrl: id ? `${window.location.origin}/public/machine/${id}` : undefined,
+    allowIndex: true,
+    schemaJson,
+  });
 
   // Loads machine data from MongoDB using the public QR route
   useEffect(() => {

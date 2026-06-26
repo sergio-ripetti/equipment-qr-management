@@ -83,7 +83,7 @@ export const getMachines = async (
   } catch (error) {
     res.status(500).json({
       message: "Error getting machines",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };
@@ -108,7 +108,7 @@ export const getMachineById = async (
   } catch (error) {
     res.status(500).json({
       message: "Error getting machine",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };
@@ -156,12 +156,20 @@ export const createMachine = async (
       imageUrl = uploadedImage.secure_url;
     }
 
-    // Creates the machine first
+    const { name, brand, model, serialNumber, purchaseDate, location, status, description } = req.body;
+
     const machine = await Machine.create({
-      ...req.body,
+      name,
+      brand,
+      model,
+      serialNumber,
+      purchaseDate,
+      location,
+      status,
+      description,
       machineCode: req.body.machineCode || nextMachineCode,
       imageUrl,
-      maintenanceHistory: req.body.maintenanceHistory || [],
+      maintenanceHistory: [],
     });
 
     // Creates the activity log after the machine exists
@@ -219,10 +227,19 @@ export const updateMachine = async (
       imageUrl = uploadedImage.secure_url;
     }
 
+    const { name, brand, model, serialNumber, purchaseDate, location, status, description } = req.body;
+
     const machine = await Machine.findByIdAndUpdate(
       req.params.id,
       {
-        ...req.body,
+        name,
+        brand,
+        model,
+        serialNumber,
+        purchaseDate,
+        location,
+        status,
+        description,
         imageUrl,
         machineCode: existingMachine.machineCode,
         maintenanceHistory: existingMachine.maintenanceHistory,
@@ -296,7 +313,7 @@ export const deleteMachine = async (
   } catch (error) {
     res.status(500).json({
       message: "Error deleting machine",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };
@@ -335,7 +352,7 @@ export const addMaintenance = async (
   } catch (error) {
     res.status(400).json({
       message: "Error adding maintenance",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };
@@ -387,7 +404,7 @@ export const updateMaintenance = async (
   } catch (error) {
     res.status(400).json({
       message: "Error updating maintenance",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };
@@ -439,7 +456,7 @@ export const deleteMaintenance = async (
   } catch (error) {
     res.status(400).json({
       message: "Error deleting maintenance",
-      error: error instanceof Error ? error.message : "Unknown error",
+      ...(process.env.NODE_ENV === "development" && { error: error instanceof Error ? error.message : "Unknown error" }),
     });
   }
 };
