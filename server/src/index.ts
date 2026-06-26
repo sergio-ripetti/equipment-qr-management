@@ -20,7 +20,18 @@ connectDB();
 const app = express();
 
 // Middlewares
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      connectSrc: ["'self'"],
+    },
+  },
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
 app.use(apiLimiter);
 const allowedOrigins = process.env.CLIENT_URL
   ? [process.env.CLIENT_URL]
