@@ -10,7 +10,9 @@ const connectDB = async (): Promise<void> => {
 
     await mongoose.connect(mongoUri);
 
-    console.log("MongoDB connected");
+    if (process.env.NODE_ENV === 'development') {
+      console.log("MongoDB connected");
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.error("MongoDB connection error:", error.message);

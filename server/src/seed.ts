@@ -36,8 +36,6 @@ const destroyData = async (): Promise<void> => {
   try {
     await Machine.deleteMany();
 
-    // console.log("All machines deleted successfully");
-
     process.exit();
   } catch (error) {
     if (error instanceof Error) {

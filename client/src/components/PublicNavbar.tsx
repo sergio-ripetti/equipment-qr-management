@@ -12,7 +12,7 @@ export default function PublicNavbar({
 }: PublicNavbarProps) {
   const navigate = useNavigate();
 
-  // Gets logged user from localStorage
+  // Gets logged user from sessionStorage
   const user = getSavedUser();
 
   const canOpenPrivateView = user && canAccessPrivateApp(user);

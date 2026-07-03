@@ -10,7 +10,9 @@ const apiKey = process.env.CLOUDINARY_API_KEY;
 const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
 if (!cloudName || !apiKey || !apiSecret) {
-  console.warn("Cloudinary environment variables are not fully configured.");
+  if (process.env.NODE_ENV === 'development') {
+    console.warn("Cloudinary environment variables are not fully configured.");
+  }
 }
 
 // Configures Cloudinary with the credentials from .env.
