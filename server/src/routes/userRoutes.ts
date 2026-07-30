@@ -19,10 +19,14 @@ router.post(
   protect,
   authorizeRoles("admin"),
   validate([
-    { field: "name", required: true, minLength: 2, maxLength: 100 },
+    { field: "name", required: true, minLength: 2, maxLength: 50 },
     { field: "email", required: true, isEmail: true, maxLength: 254 },
-    { field: "password", required: true, minLength: 6, maxLength: 128 },
-    { field: "role", required: true, allowedValues: ["admin", "technician", "viewer"] },
+    { field: "password", required: true, minLength: 6, maxLength: 12 },
+    {
+      field: "role",
+      required: true,
+      allowedValues: ["admin", "technician", "viewer"],
+    },
   ]),
   createUser,
 );

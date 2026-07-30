@@ -14,6 +14,7 @@ import {
 } from "../controllers/machineController";
 
 import { protect, authorizeRoles } from "../middleware/authMiddleware";
+import { validate } from "../middleware/validate";
 
 const router = express.Router();
 
@@ -27,6 +28,10 @@ router.post(
   protect,
   authorizeRoles("admin"),
   upload.single("image"),
+  validate([
+    { field: "name", required: true, minLength: 2, maxLength: 100 },
+    { field: "purchaseDate", required: true },
+  ]),
   createMachine,
 );
 
@@ -35,6 +40,10 @@ router.put(
   protect,
   authorizeRoles("admin"),
   upload.single("image"),
+  validate([
+    { field: "name", required: true, minLength: 2, maxLength: 100 },
+    { field: "purchaseDate", required: true },
+  ]),
   updateMachine,
 );
 
@@ -45,6 +54,11 @@ router.post(
   "/:id/maintenance",
   protect,
   authorizeRoles("admin", "technician"),
+  validate([
+    { field: "date", required: true },
+    { field: "company", required: true, minLength: 2 },
+    { field: "description", required: true, minLength: 5 },
+  ]),
   addMaintenance,
 );
 
@@ -52,6 +66,11 @@ router.put(
   "/:id/maintenance/:maintenanceIndex",
   protect,
   authorizeRoles("admin", "technician"),
+  validate([
+    { field: "date", required: true },
+    { field: "company", required: true, minLength: 2 },
+    { field: "description", required: true, minLength: 5 },
+  ]),
   updateMaintenance,
 );
 

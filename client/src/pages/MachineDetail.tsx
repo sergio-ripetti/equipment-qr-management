@@ -55,35 +55,31 @@ export default function MachineDetail() {
   // Gets logged user to control permissions
   const user = getSavedUser();
 
+  // Data state
   const [machine, setMachine] = useState<Machine | null>(null);
   const [maintenanceList, setMaintenanceList] = useState<Maintenance[]>([]);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  // UI state
+  const [uiState, setUiState] = useState({
+    loading: true,
+    error: "",
+    showForm: false,
+  });
 
-  // Controls if the new maintenance form is visible
-  const [showForm, setShowForm] = useState(false);
-
-  // Stores the new maintenance form data
+  // Form state: new maintenance
   const [newMaintenance, setNewMaintenance] =
     useState<Maintenance>(EMPTY_MAINTENANCE);
-
-  // Stores validation errors for the new maintenance form
   const [maintenanceErrors, setMaintenanceErrors] = useState<MaintenanceErrors>(
     {},
   );
 
-  // Stores which maintenance item is being edited
+  // Form state: edit maintenance
   const [editIndex, setEditIndex] = useState<number | null>(null);
-
-  // Stores the temporary data while editing maintenance
   const [editData, setEditData] = useState<Maintenance>(EMPTY_MAINTENANCE);
-
-  // Stores validation errors for the maintenance edit form
   const [editMaintenanceErrors, setEditMaintenanceErrors] =
     useState<MaintenanceErrors>({});
 
-  // Stores delete confirmation modal state
+  // Modal state
   const [confirmModal, setConfirmModal] = useState<ConfirmModalState>({
     isOpen: false,
     type: null,
@@ -94,8 +90,11 @@ export default function MachineDetail() {
   useEffect(() => {
     const loadMachine = async () => {
       if (!id) {
-        setError("Invalid equipment ID.");
-        setLoading(false);
+        setUiState((prev) => ({
+          ...prev,
+          error: "Invalid equipment ID.",
+          loading: false,
+        }));
         return;
       }
 
@@ -105,10 +104,13 @@ export default function MachineDetail() {
         setMachine(data);
         setMaintenanceList(data.maintenanceHistory || []);
       } catch (error) {
-        setError("Could not load this equipment from the server.");
+        setUiState((prev) => ({
+          ...prev,
+          error: "Could not load this equipment from the server.",
+        }));
         console.error(error);
       } finally {
-        setLoading(false);
+        setUiState((prev) => ({ ...prev, loading: false }));
       }
     };
 
@@ -135,7 +137,7 @@ export default function MachineDetail() {
   // Adds a new maintenance item to MongoDB
   const handleAddMaintenance = async () => {
     if (!id) {
-      setError("Invalid equipment ID.");
+      setUiState((prev) => ({ ...prev, error: "Invalid equipment ID." }));
       return;
     }
 
@@ -154,10 +156,13 @@ export default function MachineDetail() {
 
       setNewMaintenance(EMPTY_MAINTENANCE);
       setMaintenanceErrors({});
-      setShowForm(false);
+      setUiState((prev) => ({ ...prev, showForm: false }));
     } catch (error) {
       console.error(error);
-      setError("Could not save the maintenance record.");
+      setUiState((prev) => ({
+        ...prev,
+        error: "Could not save the maintenance record.",
+      }));
     }
   };
 
@@ -188,7 +193,10 @@ export default function MachineDetail() {
   // Saves the edited maintenance item to MongoDB
   const handleSaveEdit = async () => {
     if (!id || editIndex === null) {
-      setError("Invalid maintenance record.");
+      setUiState((prev) => ({
+        ...prev,
+        error: "Invalid maintenance record.",
+      }));
       return;
     }
 
@@ -214,7 +222,10 @@ export default function MachineDetail() {
       setEditMaintenanceErrors({});
     } catch (error) {
       console.error(error);
-      setError("Could not update the maintenance record.");
+      setUiState((prev) => ({
+        ...prev,
+        error: "Could not update the maintenance record.",
+      }));
     }
   };
 
@@ -255,7 +266,7 @@ export default function MachineDetail() {
   // Confirms delete action depending on modal type
   const handleConfirmDelete = async () => {
     if (!id) {
-      setError("Invalid equipment ID.");
+      setUiState((prev) => ({ ...prev, error: "Invalid equipment ID." }));
       return;
     }
 
@@ -287,17 +298,19 @@ export default function MachineDetail() {
     } catch (error) {
       console.error(error);
 
-      setError(
-        confirmModal.type === "equipment"
-          ? "Could not delete the equipment."
-          : "Could not delete the maintenance record.",
-      );
+      setUiState((prev) => ({
+        ...prev,
+        error:
+          confirmModal.type === "equipment"
+            ? "Could not delete the equipment."
+            : "Could not delete the maintenance record.",
+      }));
 
       handleCancelDelete();
     }
   };
 
-  if (loading) {
+  if (uiState.loading) {
     return (
       <div className="max-w-6xl mx-auto mt-10 p-6">
         <p className="text-gray-500">Loading equipment details...</p>
@@ -305,10 +318,10 @@ export default function MachineDetail() {
     );
   }
 
-  if (error) {
+  if (uiState.error) {
     return (
       <div className="max-w-6xl mx-auto mt-10 p-6">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-600">{uiState.error}</p>
       </div>
     );
   }
@@ -362,7 +375,7 @@ export default function MachineDetail() {
 
       <MaintenanceSection
         maintenanceList={maintenanceList}
-        showForm={showForm}
+        showForm={uiState.showForm}
         newMaintenance={newMaintenance}
         maintenanceErrors={maintenanceErrors}
         editIndex={editIndex}
@@ -371,7 +384,9 @@ export default function MachineDetail() {
         canAddMaintenance={canAddMaintenance(user)}
         canEditMaintenance={canEditMaintenance(user)}
         canDeleteMaintenance={canDeleteMaintenance(user)}
-        onToggleForm={() => setShowForm((prev) => !prev)}
+        onToggleForm={() =>
+          setUiState((prev) => ({ ...prev, showForm: !prev.showForm }))
+        }
         onNewMaintenanceChange={handleChange}
         onAddMaintenance={handleAddMaintenance}
         onStartEdit={handleStartEdit}

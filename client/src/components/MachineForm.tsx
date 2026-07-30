@@ -67,6 +67,7 @@ export default function MachineForm({
           value={formData.name}
           onChange={onChange}
           placeholder="Industrial Oven"
+          maxLength={100}
           className={`w-full border p-3 rounded-lg focus:outline-none focus:ring-2 ${
             errors.name
               ? "border-red-400 focus:ring-red-300"
@@ -95,6 +96,7 @@ export default function MachineForm({
             value={formData.brand}
             onChange={onChange}
             placeholder="Rational"
+            maxLength={60}
             className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
@@ -113,6 +115,7 @@ export default function MachineForm({
             value={formData.model}
             onChange={onChange}
             placeholder="Model number"
+            maxLength={60}
             className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
@@ -134,6 +137,7 @@ export default function MachineForm({
             value={formData.serialNumber}
             onChange={onChange}
             placeholder="SN-0001"
+            maxLength={80}
             className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
@@ -180,6 +184,7 @@ export default function MachineForm({
             value={formData.location}
             onChange={onChange}
             placeholder="Kitchen area"
+            maxLength={100}
             className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
@@ -219,6 +224,7 @@ export default function MachineForm({
           onChange={onChange}
           rows={4}
           placeholder="Equipment notes..."
+          maxLength={500}
           className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>

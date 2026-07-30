@@ -73,11 +73,10 @@ export default function ActivityLog() {
     return [...new Set(actions)];
   }, [logs]);
 
-  // Gets unique roles from logs
+  // Gets all valid roles with display labels
   const roleOptions = useMemo(() => {
-    const roles = logs.map((log) => log.userRole).filter(Boolean);
-    return [...new Set(roles)];
-  }, [logs]);
+    return ["admin", "technician", "viewer"];
+  }, []);
 
   // Filters logs by search, action, and role
   const filteredLogs = useMemo(() => {
@@ -163,8 +162,7 @@ export default function ActivityLog() {
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setActionFilter(e.target.value)
               }
-              className="w-full border border-gray-300 p-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
+              className="w-full border border-gray-300 p-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-400">
               <option value="all">All actions</option>
 
               {actionOptions.map((action) => (
@@ -186,15 +184,10 @@ export default function ActivityLog() {
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setRoleFilter(e.target.value)
               }
-              className="w-full border border-gray-300 p-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
+              className="w-full border border-gray-300 p-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-400">
               <option value="all">All roles</option>
-
-              {roleOptions.map((role) => (
-                <option key={role} value={role}>
-                  {role}
-                </option>
-              ))}
+              <option value="admin">Admin</option>
+              <option value="technician">Technician</option>
             </select>
           </div>
         </div>
@@ -207,8 +200,7 @@ export default function ActivityLog() {
           <button
             type="button"
             onClick={handleClearFilters}
-            className="text-sm text-blue-600 hover:underline text-left sm:text-right"
-          >
+            className="text-sm text-blue-600 hover:underline text-left sm:text-right">
             Clear filters
           </button>
         </div>
@@ -225,9 +217,8 @@ export default function ActivityLog() {
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                       <span
                         className={`inline-flex items-center border px-3 py-1 rounded-full text-xs font-semibold ${getActionBadgeClass(
-                          log.action
-                        )}`}
-                      >
+                          log.action,
+                        )}`}>
                         {getActionLabel(log.action)}
                       </span>
 

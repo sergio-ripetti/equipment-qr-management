@@ -106,6 +106,26 @@ export default function UserManagement() {
       return;
     }
 
+    if (formData.name.trim().length < 2) {
+      setError("User name must contain at least 2 characters.");
+      return;
+    }
+
+    if (formData.name.trim().length > 50) {
+      setError("User name cannot exceed 50 characters.");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must contain at least 6 characters.");
+      return;
+    }
+
+    if (formData.password.length > 12) {
+      setError("Password cannot exceed 12 characters.");
+      return;
+    }
+
     try {
       setIsSaving(true);
 
@@ -263,6 +283,7 @@ export default function UserManagement() {
               value={formData.name}
               onChange={handleChange}
               placeholder="User name"
+              maxLength={50}
               className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -278,6 +299,7 @@ export default function UserManagement() {
               value={formData.email}
               onChange={handleChange}
               placeholder="user@test.com"
+              maxLength={254}
               className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -292,7 +314,8 @@ export default function UserManagement() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Minimum 6 characters"
+              placeholder="6-12 characters"
+              maxLength={12}
               className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>

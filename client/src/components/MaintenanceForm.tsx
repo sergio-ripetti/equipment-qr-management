@@ -62,6 +62,7 @@ export default function MaintenanceForm({
             value={newMaintenance.company}
             onChange={onChange}
             placeholder="Company"
+            maxLength={100}
             className={`w-full border p-2 rounded-lg focus:outline-none focus:ring-2 ${
               errors.company
                 ? "border-red-400 focus:ring-red-300"
@@ -87,6 +88,7 @@ export default function MaintenanceForm({
           onChange={onChange}
           rows={3}
           placeholder="Maintenance details..."
+          maxLength={1000}
           className={`w-full border p-2 rounded-lg focus:outline-none focus:ring-2 ${
             errors.description
               ? "border-red-400 focus:ring-red-300"

@@ -1,68 +1,70 @@
 # Equipment QR Management App
 
-Un sistema de gestión de equipos que permite rastrear registros, historiales de mantenimiento, códigos QR y controlar acceso por roles de usuario.
+A full-stack application for tracking equipment records, maintenance history, QR codes, and managing user access through role-based permissions.
 
-La idea surgió de una necesidad real: en lugar de buscar en hojas de cálculo, carpetas o registros en papel, cada equipo se puede acceder mediante un código QR y gestionar desde una plataforma centralizada. Hice esto como proyecto full-stack usando React, TypeScript, Node.js, Express, MongoDB, autenticación JWT y control de acceso por roles.
+This project started as a solution to a real problem: instead of searching through spreadsheets, folders, or paper records, each piece of equipment can be accessed via QR code and managed from a centralized platform. I built it as a full-stack project using React, TypeScript, Node.js, Express, MongoDB, JWT authentication, and role-based access control.
 
-**Repositorio:** https://github.com/sergio-ripetti/equipment-qr-management
+**Repository:** https://github.com/sergio-ripetti/equipment-qr-management
 
 ---
 
-## Tabla de contenidos
+## Table of Contents
 
 - [Quick Start](#quick-start)
-- [Demo en vivo](#demo-en-vivo)
-- [Requisitos](#requisitos)
+- [Live Demo](#live-demo)
+- [Requirements](#requirements)
 - [Screenshots](#screenshots)
-- [Características](#características-principales)
-- [Roles de usuario](#roles-de-usuario)
-- [Tecnología](#tecnología-usada)
-- [Estructura](#estructura-del-proyecto)
-- [Cómo correr localmente](#cómo-correr-localmente)
-- [Scripts](#scripts-disponibles)
+- [Features](#features)
+- [User Roles](#user-roles)
+- [Technology](#technology-used)
+- [Project Structure](#project-structure)
+- [Running Locally](#running-locally)
+- [Environment Variables](#environment-variables)
+- [Available Scripts](#available-scripts)
 - [API Endpoints](#api-endpoints)
+- [Image Upload](#image-upload)
+- [QR Codes](#qr-codes)
+- [Activity Logs](#activity-logs)
+- [Engineering Decisions](#engineering-decisions)
+- [Security and Validation](#security-and-validation)
+- [Quality Assurance](#quality-assurance)
 - [Troubleshooting](#troubleshooting)
 - [Deployment](#deployment)
-- [Contribuir](#contribuir)
+- [Contributing](#contributing)
+- [Future Improvements](#future-improvements)
 - [License](#license)
 
 ---
 
 ## Quick Start
 
-Si solo quieres correr el proyecto rápido sin leer todo:
+To run the project quickly without reading everything:
 
 ```bash
-# Clonar
+# Clone
 git clone https://github.com/sergio-ripetti/equipment-qr-management.git
 cd equipment-qr-management
 
 # Frontend
 cd client
 npm install
-# Crear client/.env con: VITE_API_URL=http://localhost:5000
+# See "Environment Variables" section below to configure client/.env
 npm run dev
-# Frontend corre en http://localhost:5173
+# Frontend runs at http://localhost:5173
 
-# Backend (en otra terminal, desde raíz)
+# Backend (in another terminal, from root)
 cd server
 npm install
-# Crear server/.env con:
-# PORT=5000
-# MONGO_URI=your_mongodb_uri
-# JWT_SECRET=your_secret
-# CLOUDINARY_CLOUD_NAME=your_name
-# CLOUDINARY_API_KEY=your_key
-# CLOUDINARY_API_SECRET=your_secret
+# See "Environment Variables" section below to configure server/.env
 npm run dev
-# Backend corre en http://localhost:5000
+# Backend runs at http://localhost:5000
 ```
 
-Listo. Ambos deberían estar corriendo.
+Done. Both should be running.
 
 ---
 
-## Demo en vivo
+## Live Demo
 
 Frontend: https://equipment-qr-management.vercel.app/
 
@@ -70,17 +72,17 @@ Backend API: https://equipment-qr-management.onrender.com
 
 ---
 
-## Requisitos
+## Requirements
 
-Antes de empezar, necesitas tener instalado:
+Before getting started, you need:
 
-- Node.js 18.0.0 o mayor
-- npm 9.0.0 o mayor (viene con Node.js)
-- MongoDB (local o Atlas account)
-- Cloudinary account (para subida de imágenes)
-- Una cuenta de GitHub (para clonar)
+- Node.js 18.0.0 or higher
+- npm 9.0.0 or higher (comes with Node.js)
+- MongoDB (local or Atlas account)
+- Cloudinary account (for image uploads)
+- A GitHub account (to clone the repo)
 
-Verifica que tienes Node.js:
+Verify you have Node.js:
 ```bash
 node --version
 npm --version
@@ -96,88 +98,88 @@ npm --version
 **Dashboard**
 ![Dashboard](screenshots/dashboard.png)
 
-**Home - Búsqueda**
+**Home - Search**
 ![Home Search Page](screenshots/home.png)
 
-**Lista de equipos**
+**Equipment List**
 ![Equipment List](screenshots/equipment-list.png)
 
-**Detalle de equipo**
+**Equipment Detail**
 ![Machine Detail](screenshots/machine-detail.png)
 
-**Página pública QR**
+**Public QR Page**
 ![Public QR Page](screenshots/public-qr-page.png)
 
 ---
 
-## Características principales
+## Features
 
-- App full-stack con TypeScript en frontend y backend
-- CRUD completo de equipos
-- Generación de códigos QR para cada equipo
-- Página pública de QR con detalles del equipo
-- Subida de imágenes con preview y validación
-- Almacenamiento de imágenes en Cloudinary
-- Historial de mantenimiento completo
-- Agregar, editar y eliminar registros de mantenimiento
-- Autenticación con JWT
-- Control de acceso por roles (Admin, Technician, Viewer)
-- Log de actividades del sistema
-- Gestión de usuarios para admins
-- Dashboard con resumen de equipos y mantenimiento
-- Interfaz responsiva para escritorio y móvil
-- Integración con MongoDB Atlas
+- Full-stack application with TypeScript on frontend and backend
+- Complete equipment CRUD
+- QR code generation for each piece of equipment
+- Public QR page with equipment details
+- Image upload with preview and validation
+- Image storage on Cloudinary
+- Full maintenance history
+- Add, edit, and delete maintenance records
+- JWT authentication
+- Role-based access control (Admin, Technician, Viewer)
+- System activity logging
+- User management for administrators
+- Dashboard with equipment and maintenance summary
+- Responsive interface for desktop and mobile
+- MongoDB Atlas integration
 
 ---
 
-## Roles de usuario
+## User Roles
 
 ### Admin
 
-Acceso completo al sistema. Puede:
+Full access to the system. Can:
 
-- Ver dashboard
-- Buscar y ver equipos
-- Crear, editar y eliminar equipos
-- Agregar, editar y eliminar registros de mantenimiento
-- Descargar y imprimir códigos QR
-- Gestionar otros usuarios
-- Ver logs de actividad
+- View dashboard
+- Search and view equipment
+- Create, edit, and delete equipment
+- Add, edit, and delete maintenance records
+- Download and print QR codes
+- Manage other users
+- View activity logs
 
 ### Technician
 
-Puede trabajar con mantenimiento pero no puede crear ni eliminar equipos.
+Can work with maintenance but cannot create or delete equipment.
 
-- Ver dashboard
-- Buscar y ver equipos
-- Agregar y editar mantenimiento
-- Descargar códigos QR
+- View dashboard
+- Search and view equipment
+- Add and edit maintenance records
+- Download QR codes
 
-No puede:
+Cannot:
 
-- Crear o editar equipos
-- Eliminar equipos
-- Eliminar mantenimiento
-- Gestionar usuarios
-- Ver logs
+- Create or edit equipment
+- Delete equipment
+- Delete maintenance records
+- Manage users
+- View logs
 
 ### Viewer
 
-Acceso de solo lectura.
+Read-only access.
 
-- Ver dashboard
-- Buscar y ver equipos
-- Ver detalles de equipos
+- View dashboard
+- Search and view equipment
+- View equipment details
 
-No puede hacer cambios de ningún tipo.
+Cannot make any changes.
 
-### Usuario público (QR)
+### Public User (QR)
 
-Puede escanear un código QR y acceder a información pública del equipo con su historial de mantenimiento.
+Can scan a QR code and access public equipment information with maintenance history.
 
 ---
 
-## Tecnología usada
+## Technology Used
 
 **Frontend**
 - React 19
@@ -201,14 +203,14 @@ Puede escanear un código QR y acceder a información pública del equipo con su
 - CORS
 
 **Deployment**
-- Frontend en Vercel
-- Backend en Render
-- Base de datos en MongoDB Atlas
-- Imágenes en Cloudinary
+- Frontend on Vercel
+- Backend on Render
+- Database on MongoDB Atlas
+- Images on Cloudinary
 
 ---
 
-## Estructura del proyecto
+## Project Structure
 
 ```
 equipment-qr-management
@@ -248,39 +250,70 @@ equipment-qr-management
 
 ---
 
-## Cómo correr localmente
+## Running Locally
 
-### 1. Clonar el repo
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/sergio-ripetti/equipment-qr-management.git
 cd equipment-qr-management
 ```
 
-### 2. Instalar dependencias del frontend
+### 2. Install frontend dependencies
 
 ```bash
 cd client
 npm install
 ```
 
-### 3. Instalar dependencias del backend
+### 3. Install backend dependencies
 
-En otra terminal desde la raíz del proyecto:
+In another terminal from the project root:
 
 ```bash
 cd server
 npm install
 ```
 
-### 4. Crear archivos .env
+### 4. Configure environment variables
 
-Frontend `client/.env`:
+See the [Environment Variables](#environment-variables) section below.
+
+### 5. Run the backend
+
+From the `server` folder:
+
+```bash
+npm run dev
+```
+
+Should be running at: http://localhost:5000
+
+Test by opening http://localhost:5000 in your browser, you should see:
+```
+Equipment QR Management API is running
+```
+
+### 6. Run the frontend
+
+From the `client` folder:
+
+```bash
+npm run dev
+```
+
+Should be running at: http://localhost:5173
+
+---
+
+## Environment Variables
+
+### Frontend (`client/.env`)
 ```
 VITE_API_URL=http://localhost:5000
 ```
 
-Backend `server/.env`:
+### Backend (`server/.env`)
 ```
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
@@ -291,62 +324,39 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
-### 5. Correr el backend
-
-Desde la carpeta `server`:
-
-```bash
-npm run dev
-```
-
-Debería estar en: http://localhost:5000
-
-Prueba abriendo http://localhost:5000 en el navegador y deberías ver:
-```
-Equipment QR Management API is running
-```
-
-### 6. Correr el frontend
-
-Desde la carpeta `client`:
-
-```bash
-npm run dev
-```
-
-Debería estar en: http://localhost:5173
+For production deployment, update `VITE_API_URL` to your public backend URL (e.g., `https://your-backend.onrender.com`).
 
 ---
 
-## Scripts disponibles
+## Available Scripts
 
-**Frontend** (desde carpeta `client`)
+### Frontend (from `client` folder)
 
 ```bash
-npm run dev          # Inicia servidor de desarrollo
-npm run build        # Build para producción
-npm run lint         # ESLint
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run lint         # Run ESLint
 npm run typecheck    # TypeScript type checking
-npm run preview      # Preview del build de producción
+npm run preview      # Preview production build
 ```
 
-**Backend** (desde carpeta `server`)
+### Backend (from `server` folder)
 
 ```bash
-npm run dev          # Inicia servidor con Nodemon
-npm run build        # Compila TypeScript a dist/
-npm start            # Corre el build compilado
+npm run dev          # Start server with Nodemon
+npm run build        # Compile TypeScript to dist/
+npm start            # Run compiled production build
 npm run typecheck    # TypeScript type checking
-npm run lint         # ESLint
-npm run seed         # Importa datos de demo a MongoDB
-npm run destroy      # Borra datos de demo
+npm run lint         # Run ESLint
+npm run seed         # Import demo equipment data to MongoDB
+npm run destroy      # Delete demo data
 ```
 
 ---
 
 ## API Endpoints
 
-Base URL local: http://localhost:5000
+Base URL (local): http://localhost:5000
 
 **Auth**
 ```
@@ -355,7 +365,7 @@ POST /api/auth/register
 GET  /api/auth/profile
 ```
 
-**Equipos**
+**Equipment**
 ```
 GET    /api/machines
 GET    /api/machines/:id
@@ -364,14 +374,14 @@ PUT    /api/machines/:id
 DELETE /api/machines/:id
 ```
 
-**Mantenimiento**
+**Maintenance**
 ```
 POST   /api/machines/:id/maintenance
 PUT    /api/machines/:id/maintenance/:maintenanceIndex
 DELETE /api/machines/:id/maintenance/:maintenanceIndex
 ```
 
-**Usuarios**
+**Users**
 ```
 GET    /api/users
 POST   /api/users
@@ -379,10 +389,101 @@ PUT    /api/users/:id/role
 DELETE /api/users/:id
 ```
 
-**Activity logs**
+**Activity Logs**
 ```
 GET /api/activity-logs
 ```
+
+---
+
+## Image Upload
+
+I use Cloudinary to store equipment images. When a user uploads an image, it's saved to Cloudinary instead of locally, so it persists even if the server restarts or gets redeployed.
+
+Flow:
+1. User selects image
+2. Frontend sends as FormData
+3. Backend receives with Multer and uploads to Cloudinary
+4. MongoDB stores the Cloudinary URL
+5. Frontend displays the image from Cloudinary
+
+Demo images come from the frontend's public folder by default.
+
+---
+
+## QR Codes
+
+Each piece of equipment has a QR code that links to a public page. From there you can:
+
+- View equipment details
+- View status
+- View maintenance history
+- Log in if you have an account
+
+Useful for quick inspections or maintenance checks.
+
+---
+
+## Activity Logs
+
+The system records:
+
+- Equipment created, modified, deleted
+- Maintenance added, edited, deleted
+- Users created, modified, deleted
+
+Only admins can view the logs.
+
+---
+
+## Engineering Decisions
+
+- **Public QR vs. protected management:** Public QR pages (`/public/machine/:id`) don't require authentication to allow quick access via scan. All management operations are protected by JWT and role-based authorization.
+
+- **Cloudinary for images:** Cloudinary is used instead of local storage to ensure images persist across server restarts, deployments, and horizontal scaling.
+
+- **Backend validation as source of truth:** While the frontend validates for immediate UX feedback, the backend validates all inputs independently. This prevents bypasses and maintains data integrity.
+
+- **Server-side authorization:** Role-based access control happens in server middleware, not in frontend code. Access decisions are never trusted to client-side logic.
+
+- **Activity Logs:** Every CRUD change to equipment, maintenance, and users is recorded for audit, traceability, and production debugging.
+
+---
+
+## Security and Validation
+
+The project implements several security and validation measures:
+
+- Sensitive environment variables excluded from repository (`.env` in `.gitignore`)
+- JWT tokens with configured expiration (24 hours)
+- Passwords hashed with bcryptjs
+- Input validation on critical endpoints (authentication, equipment, maintenance, users)
+- TypeScript strict mode enabled on frontend and backend
+- Error handling that doesn't expose sensitive details in HTTP 400/500 responses
+- Authorization middleware on all protected routes
+- CORS protection configured for allowed origins
+
+---
+
+## Quality Assurance
+
+**Manual Verification Completed:**
+- ✅ Authentication (login/register/logout)
+- ✅ Roles and permissions (Admin, Technician, Viewer, Public)
+- ✅ Equipment CRUD (create, list, edit, delete)
+- ✅ Maintenance CRUD (add, edit, delete records)
+- ✅ User Management (create, change role, delete)
+- ✅ Activity Logs (filtering by action, role, search)
+- ✅ QR Codes (generation, download, print)
+- ✅ Public QR Pages (access without authentication)
+- ✅ Image upload and display (Cloudinary)
+- ✅ Responsive design (desktop, tablet, mobile)
+- ✅ Input validation (length, format, required fields)
+
+**Development Tools:**
+- ✅ ESLint (frontend and backend): No errors
+- ✅ TypeScript type checking (frontend and backend): No errors
+- ✅ Production builds (frontend and backend): No errors
 
 ---
 
@@ -390,122 +491,67 @@ GET /api/activity-logs
 
 ### Error: "Port 5000 is already in use"
 
-El puerto 5000 ya está ocupado. Soluciones:
+Port 5000 is already in use. Solutions:
 
-Opción 1: Matar el proceso que usa el puerto
+Option 1: Kill the process using the port
 ```bash
-# En Mac/Linux
+# On Mac/Linux
 lsof -i :5000
 kill -9 <PID>
 
-# En Windows
+# On Windows
 netstat -ano | findstr :5000
 taskkill /PID <PID> /F
 ```
 
-Opción 2: Cambiar el puerto en `server/.env`
+Option 2: Change the port in `server/.env`
 ```
 PORT=5001
 ```
 
 ### Error: "Cannot connect to MongoDB"
 
-Verifica tu `MONGO_URI` en `server/.env`:
-- Asegúrate que está correcta
-- Si usas MongoDB Atlas, verifica que tu IP está en la whitelist
-- Comprueba que tienes conexión a internet
+Verify your `MONGO_URI` in `server/.env`:
+- Make sure it's correct
+- If using MongoDB Atlas, verify your IP is in the whitelist
+- Check that you have internet connection
 
 ### Error: "Cloudinary error"
 
-Verifica tus credenciales de Cloudinary en `server/.env`:
+Verify your Cloudinary credentials in `server/.env`:
 - `CLOUDINARY_CLOUD_NAME`
 - `CLOUDINARY_API_KEY`
 - `CLOUDINARY_API_SECRET`
 
-Son sensibles y deben ser exactas. Cópialas de nuevo desde tu dashboard de Cloudinary.
+These are sensitive and must be exact. Copy them again from your Cloudinary dashboard.
 
 ### Error: "VITE_API_URL is not defined"
 
-Verifica que tu `client/.env` existe y tiene:
+Verify that your `client/.env` exists and contains:
 ```
 VITE_API_URL=http://localhost:5000
 ```
 
-Después de crear el archivo, reinicia el servidor de frontend.
+After creating the file, restart the frontend server.
 
-### La app corre pero no carga datos
+### App runs but doesn't load data
 
-Asegúrate que:
-- El backend está corriendo en http://localhost:5000
-- MongoDB está conectado (verifica MONGO_URI)
-- No hay errores en la consola del navegador (abre DevTools)
+Make sure that:
+- The backend is running at http://localhost:5000
+- MongoDB is connected (verify MONGO_URI)
+- There are no errors in the browser console (open DevTools)
 
 ### Error: "npm: command not found"
 
-Node.js no está instalado o no está en tu PATH. Descarga desde https://nodejs.org/ e instala la versión LTS.
-
----
-
-## Cómo funcionan las imágenes
-
-Uso Cloudinary para almacenar imágenes de equipos. Cuando un usuario sube una imagen, se guarda en Cloudinary en lugar de localmente, así persiste incluso si el servidor se reinicia o se redeploy.
-
-Flujo:
-1. Usuario selecciona imagen
-2. Frontend envía como FormData
-3. Backend recibe con Multer y sube a Cloudinary
-4. MongoDB guarda la URL de Cloudinary
-5. Frontend muestra la imagen desde Cloudinary
-
-Las imágenes de demo por defecto vienen de la carpeta public del frontend.
-
----
-
-## Códigos QR
-
-Cada equipo tiene un código QR que enlaza a una página pública. Desde ahí se puede:
-
-- Ver detalles del equipo
-- Ver estado
-- Ver historial de mantenimiento
-- Loguearse si tienes cuenta
-
-Útil para inspecciones rápidas o checks de mantenimiento.
-
----
-
-## Logs de actividad
-
-El sistema registra:
-
-- Equipos creados, modificados, eliminados
-- Mantenimiento agregado, editado, eliminado
-- Usuarios creados, modificados, eliminados
-
-Solo admins pueden ver los logs.
-
----
-
-## Seguridad
-
-Sigo estas prácticas en la app:
-
-- Variables de entorno sensibles excluidas del repositorio
-- CORS restringido a orígenes específicos en producción
-- Tokens JWT que expiran después de 24 horas
-- Contraseñas hasheadas con bcryptjs
-- Errores en producción sin detalles sensibles
-- Validación de todos los inputs
-- TypeScript strict mode habilitado
-- Tokens guardados en sessionStorage en lugar de localStorage
+Node.js is not installed or not in your PATH. Download from https://nodejs.org/ and install the LTS version.
 
 ---
 
 ## Deployment
 
-Recomendado: Frontend en Vercel, backend en Render, BD en MongoDB Atlas, imágenes en Cloudinary.
+Recommended: Frontend on Vercel, backend on Render, database on MongoDB Atlas, images on Cloudinary.
 
-**Frontend en Vercel**
+**Frontend on Vercel**
 
 ```
 Root directory: client
@@ -513,12 +559,12 @@ Build command: npm run build
 Output directory: dist
 ```
 
-Variable de entorno:
+Environment variable:
 ```
 VITE_API_URL=https://your-backend-url.com
 ```
 
-**Backend en Render**
+**Backend on Render**
 
 ```
 Root directory: server
@@ -526,7 +572,7 @@ Build command: npm install --include=dev && npm run build
 Start command: npm start
 ```
 
-Variables de entorno:
+Environment variables (see [Environment Variables](#environment-variables) for complete structure):
 ```
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
@@ -539,58 +585,58 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
 ---
 
-## Contribuir
+## Contributing
 
-Si quieres contribuir:
+If you want to contribute:
 
-1. Fork el repo
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1. Fork the repo
+2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-## Mejoras futuras
+## Future Improvements
 
-- Optimización de imágenes con Cloudinary
-- Tests automatizados
-- Reset de contraseña
-- Notificaciones por email
-- Fechas de vencimiento y reminders de mantenimiento
-- Analytics avanzado en dashboard
-- Templates para imprimir etiquetas QR
-- Exportar logs en PDF o CSV
-- Mejorar configuración de deployment
-- Paginación para listas grandes
+- Image optimization with Cloudinary
+- Automated tests
+- Password reset
+- Email notifications
+- Maintenance expiration dates and reminders
+- Advanced analytics in dashboard
+- QR label print templates
+- Export logs to PDF or CSV
+- Improve deployment configuration
+- Pagination for large lists
 
 ---
 
 ## License
 
-Este proyecto está bajo la licencia MIT. Ver el archivo `LICENSE` para más detalles.
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ---
 
-## Estado actual
+## Project Status
 
-Migrado completamente a TypeScript en frontend y backend. Todo funciona:
+Fully implemented in TypeScript (frontend and backend) with the following operational features:
 
-- Autenticación
-- Roles y permisos
-- CRUD de equipos
-- Subida de imágenes a Cloudinary
-- CRUD de mantenimiento
-- Páginas públicas de QR
-- Logs de actividad
-- Gestión de usuarios
-- Builds sin errores
-- Responsive en desktop y móvil
+- ✅ JWT authentication with role-based control
+- ✅ Complete equipment CRUD with validation
+- ✅ Image upload and storage on Cloudinary
+- ✅ Complete maintenance records with history
+- ✅ QR codes with public pages
+- ✅ Activity logging and audit trail
+- ✅ User management for administrators
+- ✅ Error-free builds (frontend and backend)
+- ✅ Input validation on critical endpoints
+- ✅ Responsive design (desktop, tablet, mobile)
 
 ---
 
-## Autor
+## Author
 
-Desarrollado por Sergio Ripetti como proyecto full-stack para portfolio.
+Developed by Sergio Ripetti as a full-stack portfolio project.
 
-Contacto: https://github.com/sergio-ripetti
+Contact: https://github.com/sergio-ripetti

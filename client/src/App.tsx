@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import RoleRoute from "./components/RoleRoute";
@@ -31,21 +32,22 @@ export default function App() {
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar - overlay on mobile only, hidden on desktop */}
-      {!isPublicRoute && !isLoginPage && (
-        <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
-      )}
-
-      {/* Main content area */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Navbar */}
+    <ErrorBoundary>
+      <div className="flex h-screen">
+        {/* Sidebar - overlay on mobile only, hidden on desktop */}
         {!isPublicRoute && !isLoginPage && (
-          <Navbar sidebarOpen={sidebarOpen} onMenuToggle={toggleSidebar} />
+          <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
         )}
 
-        {/* Main content */}
-        <main className="flex-1 overflow-y-auto bg-slate-50">
+        {/* Main content area */}
+        <div className="flex flex-col flex-1 overflow-hidden">
+          {/* Navbar */}
+          {!isPublicRoute && !isLoginPage && (
+            <Navbar sidebarOpen={sidebarOpen} onMenuToggle={toggleSidebar} />
+          )}
+
+          {/* Main content */}
+          <main className="flex-1 overflow-y-auto bg-slate-50">
           <Routes>
             <Route path="/login" element={<Login />} />
 
@@ -153,5 +155,6 @@ export default function App() {
         </main>
       </div>
     </div>
+    </ErrorBoundary>
   );
 }

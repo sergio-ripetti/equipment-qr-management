@@ -17,7 +17,7 @@ router.post(
   authLimiter,
   validate([
     { field: "email", required: true, isEmail: true },
-    { field: "password", required: true, minLength: 1 },
+    { field: "password", required: true, minLength: 6, maxLength: 12 },
   ]),
   loginUser,
 );
@@ -26,9 +26,9 @@ router.post(
   "/register",
   authLimiter,
   validate([
-    { field: "name", required: true, minLength: 2, maxLength: 100 },
+    { field: "name", required: true, minLength: 2, maxLength: 50 },
     { field: "email", required: true, isEmail: true, maxLength: 254 },
-    { field: "password", required: true, minLength: 6, maxLength: 128 },
+    { field: "password", required: true, minLength: 6, maxLength: 12 },
   ]),
   registerUser,
 );

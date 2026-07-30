@@ -51,6 +51,16 @@ export default function Login() {
       return;
     }
 
+    if (formData.password.length < 6) {
+      setError("Password must contain at least 6 characters.");
+      return;
+    }
+
+    if (formData.password.length > 12) {
+      setError("Password cannot exceed 12 characters.");
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -125,6 +135,7 @@ export default function Login() {
             value={formData.password}
             onChange={handleChange}
             placeholder="Your password"
+            maxLength={12}
             className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
