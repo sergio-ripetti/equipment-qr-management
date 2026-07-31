@@ -238,6 +238,15 @@ export default function MachineDetail() {
 
   // Opens confirmation modal for deleting equipment
   const handleDeleteMachine = () => {
+    // Prevent deletion of demo records
+    if (machine?.isDemoRecord) {
+      setUiState((prev) => ({
+        ...prev,
+        error: "This demo equipment cannot be deleted.",
+      }));
+      return;
+    }
+
     setConfirmModal({
       isOpen: true,
       type: "equipment",
@@ -298,12 +307,26 @@ export default function MachineDetail() {
     } catch (error) {
       console.error(error);
 
-      setUiState((prev) => ({
-        ...prev,
-        error:
+      let errorMessage = "";
+      if (error instanceof Error) {
+        if (error.message.includes("403") || error.message.includes("demo equipment cannot be deleted")) {
+          errorMessage = "This demo equipment cannot be deleted.";
+        } else {
+          errorMessage =
+            confirmModal.type === "equipment"
+              ? "Could not delete the equipment."
+              : "Could not delete the maintenance record.";
+        }
+      } else {
+        errorMessage =
           confirmModal.type === "equipment"
             ? "Could not delete the equipment."
-            : "Could not delete the maintenance record.",
+            : "Could not delete the maintenance record.";
+      }
+
+      setUiState((prev) => ({
+        ...prev,
+        error: errorMessage,
       }));
 
       handleCancelDelete();

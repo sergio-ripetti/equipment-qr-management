@@ -20,6 +20,7 @@ interface IMachine {
   description: string;
   imageUrl: string;
   maintenanceHistory: IMaintenance[];
+  isDemoRecord?: boolean;
 }
 
 // Maintenance schema used inside each machine
@@ -112,6 +113,11 @@ const machineSchema = new Schema<IMachine>(
     maintenanceHistory: {
       type: [maintenanceSchema],
       default: [],
+    },
+
+    isDemoRecord: {
+      type: Boolean,
+      default: false,
     },
   },
   {

@@ -1,5 +1,6 @@
 import StatusBadge from "./StatusBadge";
 import ActionButton from "./ActionButton";
+import ProtectedDeleteButton from "./ProtectedDeleteButton";
 
 import type { Machine } from "../types";
 
@@ -22,7 +23,14 @@ export default function MachineDetailHeader({
     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
       {/* Machine title and subtitle */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-800">{machine.name}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-gray-800">{machine.name}</h1>
+          {machine.isDemoRecord && (
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
+              Demo Equipment
+            </span>
+          )}
+        </div>
 
         <p className="text-gray-500 mt-2">
           Equipment details, QR code, and maintenance history.
@@ -44,7 +52,7 @@ export default function MachineDetailHeader({
           </ActionButton>
         )}
 
-        {canDelete && (
+        {canDelete && !machine.isDemoRecord && (
           <ActionButton
             variant="danger"
             onClick={onDeleteMachine}
@@ -52,6 +60,8 @@ export default function MachineDetailHeader({
             Delete Equipment
           </ActionButton>
         )}
+
+        {machine.isDemoRecord && <ProtectedDeleteButton />}
       </div>
     </div>
   );

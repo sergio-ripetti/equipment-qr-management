@@ -156,6 +156,7 @@ export const createMachine = async (
       imageUrl = uploadedImage.secure_url;
     }
 
+    // Explicitly allowlist only user-settable properties; isDemoRecord is controlled only by migrations
     const { name, brand, model, serialNumber, purchaseDate, location, status, description } = req.body;
 
     const machine = await Machine.create({
@@ -170,6 +171,7 @@ export const createMachine = async (
       machineCode: req.body.machineCode || nextMachineCode,
       imageUrl,
       maintenanceHistory: [],
+      isDemoRecord: false, // Explicitly set to false; protected machines must use migration
     });
 
     // Creates the activity log after the machine exists
@@ -227,6 +229,7 @@ export const updateMachine = async (
       imageUrl = uploadedImage.secure_url;
     }
 
+    // Explicitly allowlist only user-settable properties; isDemoRecord is controlled only by migrations
     const { name, brand, model, serialNumber, purchaseDate, location, status, description } = req.body;
 
     const machine = await Machine.findByIdAndUpdate(
@@ -243,6 +246,7 @@ export const updateMachine = async (
         imageUrl,
         machineCode: existingMachine.machineCode,
         maintenanceHistory: existingMachine.maintenanceHistory,
+        isDemoRecord: existingMachine.isDemoRecord, // Preserve protection status; only migrations can change
       },
       {
         new: true,
@@ -285,7 +289,7 @@ export const deleteMachine = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const machine = await Machine.findByIdAndDelete(req.params.id);
+    const machine = await Machine.findById(req.params.id);
 
     if (!machine) {
       res.status(404).json({
@@ -293,6 +297,16 @@ export const deleteMachine = async (
       });
       return;
     }
+
+    // Prevent deletion of demo records
+    if (machine.isDemoRecord) {
+      res.status(403).json({
+        message: "This demo equipment cannot be deleted.",
+      });
+      return;
+    }
+
+    await Machine.findByIdAndDelete(req.params.id);
 
     // Deletes the uploaded image from Cloudinary if it is not a demo/default image.
     await deleteUploadedImage(machine.imageUrl);

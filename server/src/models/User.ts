@@ -8,6 +8,7 @@ interface IUser extends Document {
   email: string;
   password: string;
   role: UserRole;
+  isProtected: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   matchPassword(enteredPassword: string): Promise<boolean>;
@@ -32,14 +33,17 @@ const userSchema = new Schema<IUser>(
     password: {
       type: String,
       required: true,
-      minlength: 6,
-      maxlength: 12,
     },
 
     role: {
       type: String,
       enum: ["admin", "technician", "viewer"],
       default: "viewer",
+    },
+
+    isProtected: {
+      type: Boolean,
+      default: false,
     },
   },
   {

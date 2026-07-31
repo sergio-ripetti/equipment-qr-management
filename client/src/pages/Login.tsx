@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { KeyIcon } from "@heroicons/react/24/outline";
 
 import PageHeader from "../components/PageHeader";
 import ActionButton from "../components/ActionButton";
+import DemoAccessModal from "../components/DemoAccessModal";
 
 import { loginUser } from "../services/authApi";
 import { saveUser } from "../utils/authStorage";
@@ -29,6 +31,9 @@ export default function Login() {
 
   // Stores loading state while logging in
   const [isLoading, setIsLoading] = useState(false);
+
+  // Stores demo access modal state
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   // Updates login form values
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,69 +90,89 @@ export default function Login() {
   };
 
   return (
-    <div className="w-[92%] max-w-md mx-auto mt-10 py-6">
-      <PageHeader
-        title="Login"
-        description="Access the Ripe Deli Equipment management system."
+    <>
+      <div className="w-[92%] max-w-md mx-auto mt-10 py-6">
+        <PageHeader
+          title="Login"
+          description="Access the Ripe Deli Equipment management system."
+        />
+
+        {error && (
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="bg-white border border-gray-100 shadow-md rounded-xl p-5 sm:p-6 space-y-5">
+          {/* Email */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block font-medium text-gray-700 mb-1">
+              Email
+            </label>
+
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="admin@test.com"
+              className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block font-medium text-gray-700 mb-1">
+              Password
+            </label>
+
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Your password"
+              maxLength={12}
+              className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <ActionButton
+            type="submit"
+            variant="primary"
+            disabled={isLoading}
+            fullWidthMobile={true}>
+            {isLoading ? "Logging in..." : "Login"}
+          </ActionButton>
+        </form>
+
+        {/* Demo Access Button */}
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsDemoModalOpen(true)}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium text-blue-600 border border-blue-300 hover:border-blue-400 rounded-lg transition-all hover:shadow-md hover:bg-white bg-white">
+            <KeyIcon className="h-5 w-5" />
+            <span>Demo Access</span>
+          </button>
+          <span className="text-xs text-gray-500 sm:ml-1">View demo credentials</span>
+        </div>
+      </div>
+
+      {/* Demo Access Modal */}
+      <DemoAccessModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
       />
-
-      {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-          {error}
-        </div>
-      )}
-
-      <form
-        onSubmit={handleSubmit}
-        noValidate
-        className="bg-white border border-gray-100 shadow-md rounded-xl p-5 sm:p-6 space-y-5">
-        {/* Email */}
-        <div>
-          <label
-            htmlFor="email"
-            className="block font-medium text-gray-700 mb-1">
-            Email
-          </label>
-
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="admin@test.com"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        {/* Password */}
-        <div>
-          <label
-            htmlFor="password"
-            className="block font-medium text-gray-700 mb-1">
-            Password
-          </label>
-
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Your password"
-            maxLength={12}
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        <ActionButton
-          type="submit"
-          variant="primary"
-          disabled={isLoading}
-          fullWidthMobile={true}>
-          {isLoading ? "Logging in..." : "Login"}
-        </ActionButton>
-      </form>
-    </div>
+    </>
   );
 }

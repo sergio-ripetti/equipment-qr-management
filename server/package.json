@@ -10,6 +10,9 @@
     "start": "node dist/index.js",
     "seed": "ts-node src/seed.ts",
     "destroy": "ts-node src/seed.ts -d",
+    "mark-protected-users": "ts-node src/migrations/markProtectedUsers.ts",
+    "update-demo-credentials": "ts-node src/migrations/updateDemoCredentials.ts",
+    "mark-demo-machines": "ts-node src/migrations/markDemoMachines.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."
   },

@@ -26,9 +26,22 @@ const allowedRoles: UserRole[] = ["admin", "technician", "viewer"];
 // @route   GET /api/users
 export const getUsers = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    const users = await User.find()
+      .select("-password")
+      .sort({ createdAt: -1 })
+      .lean();
 
-    res.status(200).json(users);
+    const userList = users.map((user: any) => ({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isProtected: user.isProtected || false,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    }));
+
+    res.status(200).json(userList);
   } catch (error) {
     res.status(500).json({
       message: "Error getting users",
@@ -60,6 +73,7 @@ export const createUser = async (
       email,
       password,
       role,
+      isProtected: false,
     });
 
     await createActivityLog({
@@ -75,6 +89,7 @@ export const createUser = async (
       name: user.name,
       email: user.email,
       role: user.role,
+      isProtected: user.isProtected,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
@@ -111,6 +126,22 @@ export const updateUserRole = async (
       return;
     }
 
+    if (user.isProtected) {
+      res.status(403).json({
+        message: "This system account is protected and cannot be reassigned.",
+      });
+      return;
+    }
+
+    const adminCount = await User.countDocuments({ role: "admin" });
+
+    if (user.role === "admin" && role !== "admin" && adminCount === 1) {
+      res.status(409).json({
+        message: "Cannot demote the last remaining administrator.",
+      });
+      return;
+    }
+
     const oldRole = user.role;
 
     user.role = role;
@@ -130,6 +161,7 @@ export const updateUserRole = async (
       name: user.name,
       email: user.email,
       role: user.role,
+      isProtected: user.isProtected,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
@@ -162,7 +194,7 @@ export const deleteUser = async (
       return;
     }
 
-    const user = await User.findByIdAndDelete(req.params.id);
+    const user = await User.findById(req.params.id);
 
     if (!user) {
       res.status(404).json({
@@ -170,6 +202,26 @@ export const deleteUser = async (
       });
       return;
     }
+
+    if (user.isProtected) {
+      res.status(403).json({
+        message: "This system account is protected and cannot be deleted.",
+      });
+      return;
+    }
+
+    if (user.role === "admin") {
+      const adminCount = await User.countDocuments({ role: "admin" });
+
+      if (adminCount === 1) {
+        res.status(409).json({
+          message: "Cannot delete the last remaining administrator.",
+        });
+        return;
+      }
+    }
+
+    await User.findByIdAndDelete(req.params.id);
 
     await createActivityLog({
       req,

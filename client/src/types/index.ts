@@ -22,6 +22,7 @@ export interface Machine {
   description?: string;
   imageUrl?: string;
   maintenanceHistory?: Maintenance[];
+  isDemoRecord?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -39,6 +40,7 @@ export interface AppUser {
   name: string;
   email: string;
   role: UserRole;
+  isProtected?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

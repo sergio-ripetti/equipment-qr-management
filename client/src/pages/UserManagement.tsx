@@ -400,6 +400,7 @@ export default function UserManagement() {
           <div className="divide-y divide-gray-100">
             {filteredUsers.map((user) => {
               const isCurrentUser = user._id === currentUser?._id;
+              const isProtected = user.isProtected ?? false;
 
               return (
                 <div
@@ -407,7 +408,14 @@ export default function UserManagement() {
                   className="p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4"
                 >
                   <div>
-                    <p className="font-semibold text-gray-800">{user.name}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-semibold text-gray-800">{user.name}</p>
+                      {isProtected && (
+                        <span title="This system account is required for demo access and cannot be deleted or reassigned." className="inline-block bg-amber-100 text-amber-800 text-xs font-medium px-2 py-1 rounded">
+                          System Account
+                        </span>
+                      )}
+                    </div>
 
                     <p className="text-sm text-gray-500">{user.email}</p>
 
@@ -416,30 +424,40 @@ export default function UserManagement() {
                         Current logged user
                       </p>
                     )}
+
+                    {isProtected && (
+                      <p className="text-xs text-amber-700 mt-1">
+                        This system account is required for demo access and cannot be deleted or reassigned.
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <select
-                      value={user.role}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        handleRoleChange(user._id, e.target.value as UserRole)
-                      }
-                      disabled={isCurrentUser}
-                      className="border border-gray-300 p-2 rounded-lg bg-white capitalize focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-60"
-                    >
-                      <option value={USER_ROLES.ADMIN}>Admin</option>
-                      <option value={USER_ROLES.TECHNICIAN}>Technician</option>
-                      <option value={USER_ROLES.VIEWER}>Viewer</option>
-                    </select>
+                    <div title={isProtected ? "System account role is fixed." : isCurrentUser ? "Cannot change your own role." : undefined}>
+                      <select
+                        value={user.role}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                          handleRoleChange(user._id, e.target.value as UserRole)
+                        }
+                        disabled={isCurrentUser || isProtected}
+                        className="border border-gray-300 p-2 rounded-lg bg-white capitalize focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-60"
+                      >
+                        <option value={USER_ROLES.ADMIN}>Admin</option>
+                        <option value={USER_ROLES.TECHNICIAN}>Technician</option>
+                        <option value={USER_ROLES.VIEWER}>Viewer</option>
+                      </select>
+                    </div>
 
-                    <ActionButton
-                      variant="danger"
-                      onClick={() => handleOpenDeleteModal(user)}
-                      disabled={isCurrentUser}
-                      fullWidthMobile={true}
-                    >
-                      Delete
-                    </ActionButton>
+                    <div title={isProtected ? "System account cannot be deleted." : isCurrentUser ? "Cannot delete your own account." : undefined}>
+                      <ActionButton
+                        variant="danger"
+                        onClick={() => handleOpenDeleteModal(user)}
+                        disabled={isCurrentUser || isProtected}
+                        fullWidthMobile={true}
+                      >
+                        Delete
+                      </ActionButton>
+                    </div>
                   </div>
                 </div>
               );
