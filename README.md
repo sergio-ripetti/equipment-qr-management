@@ -72,6 +72,53 @@ Backend API: https://equipment-qr-management.onrender.com
 
 ---
 
+## Demo Credentials
+
+A **Demo Access** button on the login page provides quick access to demonstration accounts. These are fictional test accounts created for portfolio evaluation.
+
+### Available Demo Accounts:
+
+| Role | Email | Password | Access |
+|------|-------|----------|--------|
+| **Administrator** | demo.admin@ripeqr.app | RipeAdmin26! | Full system access, user management, activity logs |
+| **Technician** | demo.tech@ripeqr.app | RipeTech26!! | Can manage maintenance records, cannot create or delete equipment |
+| **Viewer** | demo.viewer@ripeqr.app | RipeView26!! | Read-only access to equipment and maintenance history |
+
+Simply click **Demo Access** on the login page to see all credentials at once, or enter any of the above manually.
+
+---
+
+## Protected Demo Data
+
+The application includes permanently protected demonstration data to prevent accidental removal during testing:
+
+### Protected Demo Accounts
+
+Three system accounts are marked as **protected** and cannot be deleted or have their roles reassigned:
+- **Admin Demo Account** — Always retains `Admin` role
+- **Technician Demo Account** — Always retains `Technician` role
+- **Viewer Demo Account** — Always retains `Viewer` role
+
+These accounts appear with a **Protected** badge in User Management and show disabled edit/delete controls.
+
+### Protected Demo Equipment
+
+Three pieces of equipment are permanently marked as protected demo items and cannot be deleted:
+1. **Commercial Dough Mixer** (kitchen-001)
+2. **Commercial Planetary Mixer** (kitchen-002)
+3. **Commercial Display Fridge** (kitchen-003)
+
+Protected equipment:
+- ✅ Can be edited
+- ✅ Can have maintenance records added, edited, and deleted
+- ✅ Appears with a **Demo Equipment** badge
+- ✅ Has a disabled delete button (with accessible explanation)
+- ❌ Cannot be deleted via API or UI (returns HTTP 403 Forbidden)
+
+**Newly created users and machines are not protected** — you can freely create and delete normal records during testing.
+
+---
+
 ## Requirements
 
 Before getting started, you need:
@@ -115,20 +162,22 @@ npm --version
 ## Features
 
 - Full-stack application with TypeScript on frontend and backend
-- Complete equipment CRUD
+- Complete equipment CRUD with protected demo data (3 permanent demo machines)
 - QR code generation for each piece of equipment
-- Public QR page with equipment details
+- Public QR page with equipment details (no authentication required)
 - Image upload with preview and validation
-- Image storage on Cloudinary
-- Full maintenance history
-- Add, edit, and delete maintenance records
-- JWT authentication
-- Role-based access control (Admin, Technician, Viewer)
-- System activity logging
+- Image storage on Cloudinary (persists across deployments)
+- Full maintenance history with complete tracking
+- Add, edit, and delete maintenance records (including on protected demo equipment)
+- JWT authentication with 24-hour token expiration
+- Role-based access control (Admin, Technician, Viewer, Public)
+- Protected system accounts (demo Admin, Technician, Viewer cannot be deleted or modified)
+- System activity logging and audit trail
 - User management for administrators
 - Dashboard with equipment and maintenance summary
 - Responsive interface for desktop and mobile
 - MongoDB Atlas integration
+- Accessible tooltips and ARIA attributes for demo equipment protection
 
 ---
 
@@ -140,10 +189,10 @@ Full access to the system. Can:
 
 - View dashboard
 - Search and view equipment
-- Create, edit, and delete equipment
+- Create, edit, and delete equipment (except protected demo machines)
 - Add, edit, and delete maintenance records
 - Download and print QR codes
-- Manage other users
+- Manage other users (except protected system accounts)
 - View activity logs
 
 ### Technician
@@ -175,7 +224,17 @@ Cannot make any changes.
 
 ### Public User (QR)
 
-Can scan a QR code and access public equipment information with maintenance history.
+Can scan a QR code and access public equipment information with maintenance history. No authentication required for public QR pages.
+
+### Protected Demo Accounts
+
+Three system demonstration accounts are permanently protected and cannot be deleted or have their roles reassigned, regardless of user permissions:
+
+- **demo.admin@ripeqr.app** — Protected Admin account
+- **demo.tech@ripeqr.app** — Protected Technician account
+- **demo.viewer@ripeqr.app** — Protected Viewer account
+
+These accounts appear with a **Protected** badge in the User Management section.
 
 ---
 
@@ -235,6 +294,7 @@ equipment-qr-management
 │   │   ├── controllers
 │   │   ├── data
 │   │   ├── middleware
+│   │   ├── migrations          # Admin utilities for protected data
 │   │   ├── models
 │   │   ├── routes
 │   │   ├── utils
@@ -350,6 +410,11 @@ npm run typecheck    # TypeScript type checking
 npm run lint         # Run ESLint
 npm run seed         # Import demo equipment data to MongoDB
 npm run destroy      # Delete demo data
+
+# Admin migrations (one-time setup)
+npm run mark-protected-users     # Mark demo accounts as protected (requires env vars)
+npm run mark-demo-machines       # Mark 3 demo machines as protected (requires env vars)
+npm run update-demo-credentials  # Update demo account passwords (requires env vars)
 ```
 
 ---
@@ -442,11 +507,15 @@ Only admins can view the logs.
 
 - **Cloudinary for images:** Cloudinary is used instead of local storage to ensure images persist across server restarts, deployments, and horizontal scaling.
 
-- **Backend validation as source of truth:** While the frontend validates for immediate UX feedback, the backend validates all inputs independently. This prevents bypasses and maintains data integrity.
+- **Protected demo data:** Demonstration accounts and equipment are marked as protected to prevent accidental deletion during testing while remaining fully editable. Protection is enforced at the API level (HTTP 403 Forbidden) and reflected in the UI (disabled buttons, visual badges).
+
+- **Backend validation as source of truth:** While the frontend validates for immediate UX feedback, the backend validates all inputs independently. This prevents bypasses and maintains data integrity. The `isDemoRecord` and `isProtected` fields cannot be set via API — they are controlled only by migrations.
 
 - **Server-side authorization:** Role-based access control happens in server middleware, not in frontend code. Access decisions are never trusted to client-side logic.
 
 - **Activity Logs:** Every CRUD change to equipment, maintenance, and users is recorded for audit, traceability, and production debugging.
+
+- **Explicit ID-based protection:** Protected data is identified by explicit MongoDB `_id` values, not by name or order, ensuring protection survives data changes.
 
 ---
 

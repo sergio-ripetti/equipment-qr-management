@@ -24,3 +24,13 @@ server/uploads
 # OS / Editor
 .DS_Store
 .vscode
+
+# AI coding tools and local agent files
+**/.claude/
+**/.cloud/
+**/.agent/
+**/.agents/
+**/CLAUDE.md
+**/cloud.md
+**/CLOUD.md
+**/AGENTS.md
